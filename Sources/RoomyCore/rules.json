@@ -1,0 +1,1098 @@
+[
+  {
+    "id": "claude-vm",
+    "paths": [
+      "~/Library/Application Support/Claude/vm_bundles*",
+      "~/Library/Application Support/Claude-3p/vm_bundles*"
+    ],
+    "title": "Claude Cowork virtual machine",
+    "owner": "Claude desktop app",
+    "what": "A Linux virtual machine the Claude app downloads to run Cowork (agent) tasks. Usually around 10 GB.",
+    "ifDeleted": "Claude downloads it again the next time you use Cowork. Anything saved only inside the virtual machine is lost.",
+    "verdict": "review",
+    "comesBack": true,
+    "howToClean": "Quit Claude first, then move claudevm.bundle to the Trash. If you use Cowork every day it will just come back."
+  },
+  {
+    "id": "claude-code-chats",
+    "paths": [
+      "~/.claude/projects*"
+    ],
+    "title": "Claude Code chat history",
+    "owner": "Claude Code",
+    "what": "Saved transcripts of your Claude Code conversations, one folder per project.",
+    "ifDeleted": "Those conversations can no longer be resumed or searched. Your code is not affected.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Delete folders for projects you're done with. Claude Code also removes old chats itself after cleanupPeriodDays (set in ~/.claude/settings.json)."
+  },
+  {
+    "id": "codex-chats",
+    "paths": [
+      "~/.codex/sessions*"
+    ],
+    "title": "Codex chat history",
+    "owner": "OpenAI Codex",
+    "what": "Saved transcripts of your Codex sessions.",
+    "ifDeleted": "Those sessions can no longer be resumed. Your code is not affected.",
+    "verdict": "review",
+    "comesBack": false
+  },
+  {
+    "id": "git-history",
+    "paths": [
+      "*/.git",
+      "*/.git/*"
+    ],
+    "title": "Git history",
+    "owner": "Git",
+    "what": "The full version history of a code project.",
+    "ifDeleted": "The project loses its history and any commits you haven't pushed. The current files stay.",
+    "verdict": "keep",
+    "comesBack": false
+  },
+  {
+    "id": "node-modules",
+    "paths": [
+      "*/node_modules",
+      "*/node_modules/*"
+    ],
+    "title": "Node.js packages",
+    "owner": "npm, pnpm, yarn or bun",
+    "what": "Packages downloaded for a JavaScript project.",
+    "ifDeleted": "Run npm install (or pnpm, yarn or bun install) in the project to get them back. Old projects you no longer open are the easiest wins.",
+    "verdict": "safe",
+    "comesBack": false
+  },
+  {
+    "id": "build-output",
+    "paths": [
+      "*/.next",
+      "*/.next/*",
+      "*/.turbo",
+      "*/.turbo/*",
+      "*/.parcel-cache",
+      "*/.parcel-cache/*",
+      "*/__pycache__",
+      "*/.pytest_cache"
+    ],
+    "title": "Build output",
+    "owner": "The project's build tool",
+    "what": "Files a build tool generates from your source code.",
+    "ifDeleted": "Rebuilt the next time you build or run the project.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "python-venv",
+    "paths": [
+      "*/.venv",
+      "*/.venv/*"
+    ],
+    "title": "Python virtual environment",
+    "owner": "The Python project it sits in",
+    "what": "The Python packages installed for one project.",
+    "ifDeleted": "The project won't run until you recreate it.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Recreate it later with `uv sync`, or `python -m venv .venv` and `pip install -r requirements.txt`."
+  },
+  {
+    "id": "electron-cache",
+    "paths": [
+      "*/Application Support/*/Cache",
+      "*/Application Support/*/Cache/*",
+      "*/Application Support/*/Code Cache",
+      "*/Application Support/*/Code Cache/*",
+      "*/Application Support/*/GPUCache",
+      "*/Application Support/*/GPUCache/*",
+      "*/Application Support/*/Service Worker/CacheStorage",
+      "*/Application Support/*/Service Worker/CacheStorage/*"
+    ],
+    "title": "App cache",
+    "owner": "The app named in the path (Chrome, Slack, Discord, VS Code, Claude and other web-based apps)",
+    "what": "Images, scripts and compiled code the app keeps so it starts and loads faster.",
+    "ifDeleted": "The app rebuilds it as you use it. Sign-ins and settings are kept.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Quit the app first. Many apps also have a Clear Cache option in their settings."
+  },
+  {
+    "id": "spotify-cache",
+    "paths": [
+      "*/Spotify/PersistentCache*"
+    ],
+    "title": "Spotify offline cache",
+    "owner": "Spotify",
+    "what": "Songs Spotify keeps on disk so they play instantly.",
+    "ifDeleted": "Spotify streams them again. Downloaded playlists may need downloading again.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Spotify › Settings › Storage › Clear cache."
+  },
+  {
+    "id": "editor-workspace-storage",
+    "paths": [
+      "*/Application Support/Code/User/workspaceStorage*",
+      "*/Application Support/Cursor/User/workspaceStorage*"
+    ],
+    "title": "Editor per-project state",
+    "owner": "VS Code or Cursor",
+    "what": "What the editor remembers per project: open tabs, search indexes, extension data.",
+    "ifDeleted": "Projects reopen without their previous tabs and per-project extension state. Indexes rebuild.",
+    "verdict": "review",
+    "comesBack": true
+  },
+  {
+    "id": "xcode-derived-data",
+    "paths": [
+      "~/Library/Developer/Xcode/DerivedData*"
+    ],
+    "title": "Xcode build data",
+    "owner": "Xcode",
+    "what": "Build output and code indexes for your Xcode projects.",
+    "ifDeleted": "Xcode rebuilds it the next time you build. The first build is slower.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "xcode-archives",
+    "paths": [
+      "~/Library/Developer/Xcode/Archives*"
+    ],
+    "title": "Xcode archives",
+    "owner": "Xcode",
+    "what": "Builds you archived for the App Store or for sharing, with their debug symbols.",
+    "ifDeleted": "You can't re-export those builds or read crash reports from them. Keep archives of versions people still use.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Xcode › Window › Organizer › Archives, delete old ones there."
+  },
+  {
+    "id": "xcode-device-support",
+    "paths": [
+      "~/Library/Developer/Xcode/*DeviceSupport*"
+    ],
+    "title": "Device debug symbols",
+    "owner": "Xcode",
+    "what": "Debug symbols Xcode copies from each iPhone, iPad or Watch OS version you've connected.",
+    "ifDeleted": "Xcode copies them again the next time you connect a device with that OS version.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "xcode-previews",
+    "paths": [
+      "~/Library/Developer/Xcode/UserData/Previews*",
+      "~/Library/Developer/Xcode/DocumentationCache*"
+    ],
+    "title": "Xcode previews and docs cache",
+    "owner": "Xcode",
+    "what": "Files Xcode generates for SwiftUI previews and documentation.",
+    "ifDeleted": "Xcode generates them again when needed.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "simulator-caches",
+    "paths": [
+      "~/Library/Developer/CoreSimulator/Caches*"
+    ],
+    "title": "Simulator caches",
+    "owner": "Xcode Simulator",
+    "what": "Temporary files the iOS Simulator keeps.",
+    "ifDeleted": "Rebuilt the next time you run a simulator.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "simulator-devices",
+    "paths": [
+      "~/Library/Developer/CoreSimulator/Devices*"
+    ],
+    "title": "Simulator devices",
+    "owner": "Xcode Simulator",
+    "what": "Your simulated iPhones and iPads, with the apps and data installed on them.",
+    "ifDeleted": "Those simulators and their app data are gone. Xcode can create fresh ones.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Run `xcrun simctl delete unavailable` to remove simulators for OS versions you no longer have, or use Xcode › Window › Devices and Simulators."
+  },
+  {
+    "id": "simulator-runtimes",
+    "paths": [
+      "/Library/Developer/CoreSimulator*"
+    ],
+    "title": "Simulator runtimes",
+    "owner": "Xcode",
+    "what": "One full copy of iOS, watchOS or visionOS for each simulator version you downloaded.",
+    "ifDeleted": "You can't run simulators for that version until you download it again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Xcode › Settings › Components: delete versions you don't test on."
+  },
+  {
+    "id": "ios-backups",
+    "paths": [
+      "~/Library/Application Support/MobileSync/Backup*"
+    ],
+    "title": "iPhone and iPad backups",
+    "owner": "Finder",
+    "what": "Backups of your iPhone or iPad made on this Mac.",
+    "ifDeleted": "You can't restore your device from that backup. Fine if you use iCloud Backup or have a newer one.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Finder › select your device › Manage Backups, and delete old ones there."
+  },
+  {
+    "id": "ipsw",
+    "paths": [
+      "*.ipsw"
+    ],
+    "title": "Device firmware",
+    "owner": "macOS / Finder",
+    "what": "Firmware for an iPhone, iPad or Mac, kept after an update or restore.",
+    "ifDeleted": "Apple downloads it again if it's ever needed.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "installer-image",
+    "paths": [
+      "*.dmg",
+      "*.pkg",
+      "*.xip"
+    ],
+    "title": "Installer or disk image",
+    "owner": "Whatever you downloaded it for",
+    "what": "Usually an installer you downloaded to set up an app.",
+    "ifDeleted": "Nothing breaks if the app is already installed. Some .dmg files are encrypted disk images with your own files inside, so open it first if you're not sure.",
+    "verdict": "review",
+    "comesBack": false
+  },
+  {
+    "id": "docker-desktop",
+    "paths": [
+      "~/Library/Containers/com.docker.docker*"
+    ],
+    "title": "Docker Desktop disk",
+    "owner": "Docker Desktop",
+    "what": "Docker's virtual disk. Every image, container and volume lives in one big file (Docker.raw).",
+    "ifDeleted": "Deleting it directly wipes all images, containers and volumes, including databases you run in Docker.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Run `docker system prune -a` to remove unused images and stopped containers (add --volumes for unused volumes), or Docker Desktop › Troubleshoot › Clean / Purge data."
+  },
+  {
+    "id": "orbstack",
+    "paths": [
+      "~/.orbstack*",
+      "~/Library/Group Containers/*.dev.orbstack*"
+    ],
+    "title": "OrbStack containers and machines",
+    "owner": "OrbStack",
+    "what": "OrbStack's disk with your Docker images, containers, volumes and Linux machines.",
+    "ifDeleted": "All of them are wiped.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Run `docker system prune -a`, or delete machines and images inside OrbStack."
+  },
+  {
+    "id": "colima",
+    "paths": [
+      "~/.colima*",
+      "~/.lima*"
+    ],
+    "title": "Colima / Lima virtual machines",
+    "owner": "Colima or Lima",
+    "what": "Linux virtual machines that run your containers.",
+    "ifDeleted": "The machines and every container image inside them are gone.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Run `docker system prune -a` to clear unused images, or `colima delete` to remove a machine you no longer use."
+  },
+  {
+    "id": "vm-apps",
+    "paths": [
+      "~/Parallels*",
+      "*.pvm",
+      "~/Library/Containers/com.utmapp.UTM*",
+      "*.utm",
+      "~/Virtual Machines.localized*"
+    ],
+    "title": "Virtual machine",
+    "owner": "Parallels, UTM or VMware",
+    "what": "A whole computer's disk stored as files.",
+    "ifDeleted": "The virtual machine and everything inside it are gone.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Delete VMs you don't use from inside Parallels, UTM or VMware. Parallels can also reclaim unused space inside a VM's disk."
+  },
+  {
+    "id": "huggingface",
+    "paths": [
+      "~/.cache/huggingface*"
+    ],
+    "title": "Hugging Face models",
+    "owner": "Python AI tools (transformers, diffusers, MLX)",
+    "what": "AI models and datasets downloaded by Python code.",
+    "ifDeleted": "They download again the next time code asks for them, which can be many GB.",
+    "verdict": "review",
+    "comesBack": true,
+    "howToClean": "Run `huggingface-cli delete-cache` to pick which models to remove."
+  },
+  {
+    "id": "ollama",
+    "paths": [
+      "~/.ollama*"
+    ],
+    "title": "Ollama models",
+    "owner": "Ollama",
+    "what": "Local AI models you pulled with Ollama.",
+    "ifDeleted": "Those models have to be downloaded again with `ollama pull`.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Run `ollama list` to see models and `ollama rm <name>` to remove ones you don't use."
+  },
+  {
+    "id": "lm-studio",
+    "paths": [
+      "~/.lmstudio*",
+      "~/.cache/lm-studio*"
+    ],
+    "title": "LM Studio models",
+    "owner": "LM Studio",
+    "what": "Local AI models downloaded in LM Studio.",
+    "ifDeleted": "Those models have to be downloaded again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "LM Studio › My Models: delete models you don't use."
+  },
+  {
+    "id": "homebrew-cache",
+    "paths": [
+      "~/Library/Caches/Homebrew*"
+    ],
+    "title": "Homebrew downloads",
+    "owner": "Homebrew",
+    "what": "Installers Homebrew downloaded.",
+    "ifDeleted": "Homebrew downloads them again if needed.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `brew cleanup --prune=all`."
+  },
+  {
+    "id": "homebrew",
+    "paths": [
+      "/opt/homebrew*",
+      "/usr/local/Cellar*"
+    ],
+    "title": "Homebrew packages",
+    "owner": "Homebrew",
+    "what": "Command-line tools and apps installed with Homebrew.",
+    "ifDeleted": "Installed tools stop working.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Run `brew cleanup` to remove old versions and `brew autoremove` for unused dependencies. Remove tools with `brew uninstall`."
+  },
+  {
+    "id": "npm-cache",
+    "paths": [
+      "~/.npm*"
+    ],
+    "title": "npm cache",
+    "owner": "npm",
+    "what": "Copies of every package npm has downloaded.",
+    "ifDeleted": "npm downloads packages again on the next install.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `npm cache clean --force`."
+  },
+  {
+    "id": "pnpm-store",
+    "paths": [
+      "~/Library/pnpm/store*",
+      "~/.pnpm-store*",
+      "~/.local/share/pnpm/store*"
+    ],
+    "title": "pnpm package store",
+    "owner": "pnpm",
+    "what": "The shared package store pnpm links into your projects.",
+    "ifDeleted": "pnpm downloads packages again. Existing projects may need `pnpm install`.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `pnpm store prune` to remove only packages no project uses."
+  },
+  {
+    "id": "yarn-cache",
+    "paths": [
+      "~/.yarn/berry/cache*",
+      "~/.yarn/cache*"
+    ],
+    "title": "Yarn cache",
+    "owner": "Yarn",
+    "what": "Copies of packages Yarn has downloaded.",
+    "ifDeleted": "Yarn downloads packages again on the next install.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `yarn cache clean`."
+  },
+  {
+    "id": "bun-cache",
+    "paths": [
+      "~/.bun/install/cache*"
+    ],
+    "title": "Bun cache",
+    "owner": "Bun",
+    "what": "Copies of packages Bun has downloaded.",
+    "ifDeleted": "Bun downloads packages again on the next install.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `bun pm cache rm`."
+  },
+  {
+    "id": "pip-uv-cache",
+    "paths": [
+      "~/.cache/pip*",
+      "~/.cache/uv*"
+    ],
+    "title": "Python package cache",
+    "owner": "pip or uv",
+    "what": "Copies of Python packages pip or uv downloaded.",
+    "ifDeleted": "They download again on the next install.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `pip cache purge` or `uv cache clean`."
+  },
+  {
+    "id": "python-envs",
+    "paths": [
+      "~/.pyenv/versions*",
+      "~/miniconda3*",
+      "~/anaconda3*",
+      "~/miniforge3*",
+      "~/.conda*"
+    ],
+    "title": "Python installations",
+    "owner": "pyenv or conda",
+    "what": "Python versions and conda environments.",
+    "ifDeleted": "Projects that use them stop working until you recreate the environment.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Remove ones you don't use with `pyenv uninstall <version>` or `conda env remove -n <name>`. `conda clean --all` clears conda's download cache."
+  },
+  {
+    "id": "gradle",
+    "paths": [
+      "~/.gradle/caches*",
+      "~/.gradle/wrapper/dists*"
+    ],
+    "title": "Gradle cache",
+    "owner": "Gradle (Android and Java builds)",
+    "what": "Downloaded dependencies and Gradle versions.",
+    "ifDeleted": "Downloaded again on the next build, which is slower.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "maven",
+    "paths": [
+      "~/.m2/repository*"
+    ],
+    "title": "Maven repository",
+    "owner": "Maven (Java builds)",
+    "what": "Java libraries Maven downloaded.",
+    "ifDeleted": "Downloaded again on the next build.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "cargo",
+    "paths": [
+      "~/.cargo/registry*",
+      "~/.cargo/git*"
+    ],
+    "title": "Cargo cache",
+    "owner": "Cargo (Rust)",
+    "what": "Rust crates Cargo downloaded.",
+    "ifDeleted": "Downloaded again on the next build.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "rustup",
+    "paths": [
+      "~/.rustup/toolchains*"
+    ],
+    "title": "Rust toolchains",
+    "owner": "rustup",
+    "what": "Installed Rust compiler versions.",
+    "ifDeleted": "Projects pinned to that version won't build until it's reinstalled.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Run `rustup toolchain list`, then `rustup toolchain uninstall <name>` for old ones."
+  },
+  {
+    "id": "go-modules",
+    "paths": [
+      "~/go/pkg/mod*"
+    ],
+    "title": "Go module cache",
+    "owner": "Go",
+    "what": "Go modules downloaded for your projects.",
+    "ifDeleted": "Downloaded again on the next build.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `go clean -modcache`. These files are read-only, so the Trash may refuse them."
+  },
+  {
+    "id": "android-images",
+    "paths": [
+      "~/Library/Android/sdk/system-images*",
+      "~/.android/avd*"
+    ],
+    "title": "Android emulator images",
+    "owner": "Android Studio",
+    "what": "Android emulator system images and virtual devices.",
+    "ifDeleted": "Those emulators stop working until you download the images again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Android Studio › Device Manager to delete devices, and SDK Manager to remove system images."
+  },
+  {
+    "id": "android-sdk",
+    "paths": [
+      "~/Library/Android/sdk*"
+    ],
+    "title": "Android SDK",
+    "owner": "Android Studio",
+    "what": "Android build tools and platform files.",
+    "ifDeleted": "Android projects won't build until Android Studio downloads it again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Remove old platforms and build tools in Android Studio › SDK Manager."
+  },
+  {
+    "id": "editor-extensions",
+    "paths": [
+      "~/.vscode/extensions*",
+      "~/.cursor/extensions*"
+    ],
+    "title": "Editor extensions",
+    "owner": "VS Code or Cursor",
+    "what": "Extensions installed in your code editor.",
+    "ifDeleted": "The editor loses those extensions until you reinstall them.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Uninstall extensions you don't use from the editor's Extensions panel."
+  },
+  {
+    "id": "whatsapp",
+    "paths": [
+      "~/Library/Group Containers/*WhatsApp*",
+      "~/Library/Containers/*WhatsApp*"
+    ],
+    "title": "WhatsApp data",
+    "owner": "WhatsApp",
+    "what": "WhatsApp chats and the photos, videos and documents it downloaded.",
+    "ifDeleted": "Chats and media that aren't backed up are lost from this Mac.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Delete large media from inside WhatsApp."
+  },
+  {
+    "id": "telegram",
+    "paths": [
+      "~/Library/Group Containers/*Telegram*"
+    ],
+    "title": "Telegram data",
+    "owner": "Telegram",
+    "what": "Telegram's cached photos, videos and files.",
+    "ifDeleted": "Telegram downloads media again from the cloud when you open a chat.",
+    "verdict": "review",
+    "comesBack": true,
+    "howToClean": "Use Telegram's storage settings to clear cached media."
+  },
+  {
+    "id": "messages-attachments",
+    "paths": [
+      "~/Library/Messages/Attachments*"
+    ],
+    "title": "Messages attachments",
+    "owner": "Messages",
+    "what": "Photos, videos and files sent and received in Messages.",
+    "ifDeleted": "They disappear from your conversations on this Mac.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "System Settings › General › Storage › Messages lets you review large attachments, or set Messages › Settings › Keep messages to 1 Year."
+  },
+  {
+    "id": "messages",
+    "paths": [
+      "~/Library/Messages*"
+    ],
+    "title": "Messages history",
+    "owner": "Messages",
+    "what": "Your iMessage and SMS conversations.",
+    "ifDeleted": "Conversations not in iCloud are lost.",
+    "verdict": "keep",
+    "comesBack": false
+  },
+  {
+    "id": "mail",
+    "paths": [
+      "~/Library/Mail*",
+      "~/Library/Containers/com.apple.mail*"
+    ],
+    "title": "Mail data",
+    "owner": "Mail",
+    "what": "Email and attachments Mail has downloaded.",
+    "ifDeleted": "Mail has to download everything again, and messages stored only on this Mac are lost.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Delete large emails in Mail, or remove accounts you don't use."
+  },
+  {
+    "id": "photos-library",
+    "paths": [
+      "*.photoslibrary",
+      "*.photoslibrary/*"
+    ],
+    "title": "Photos library",
+    "owner": "Photos",
+    "what": "Your photo and video library.",
+    "ifDeleted": "Photos that aren't in iCloud Photos or another backup are lost forever.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Turn on iCloud Photos with Optimize Mac Storage (Photos › Settings › iCloud), or delete photos in Photos and then empty Recently Deleted."
+  },
+  {
+    "id": "final-cut",
+    "paths": [
+      "*.fcpbundle",
+      "*.fcpbundle/*"
+    ],
+    "title": "Final Cut Pro library",
+    "owner": "Final Cut Pro",
+    "what": "Your Final Cut projects, media, renders and proxies.",
+    "ifDeleted": "Your projects are gone.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "In Final Cut Pro, select the library and choose File › Delete Generated Library Files to remove render and proxy files."
+  },
+  {
+    "id": "logic-sounds",
+    "paths": [
+      "/Library/Application Support/Logic*",
+      "/Library/Application Support/GarageBand*",
+      "/Library/Audio/Apple Loops*"
+    ],
+    "title": "Logic / GarageBand sounds",
+    "owner": "Logic Pro or GarageBand",
+    "what": "Instrument sounds and loops.",
+    "ifDeleted": "Projects that use those sounds play silence until you download them again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "In Logic Pro: Logic Pro › Sound Library › Sound Library Manager."
+  },
+  {
+    "id": "steam",
+    "paths": [
+      "*/Application Support/Steam/steamapps*"
+    ],
+    "title": "Steam games",
+    "owner": "Steam",
+    "what": "Games installed through Steam.",
+    "ifDeleted": "The games have to be downloaded again.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Uninstall games from your Steam library."
+  },
+  {
+    "id": "icloud-drive",
+    "paths": [
+      "~/Library/Mobile Documents*"
+    ],
+    "title": "iCloud Drive",
+    "owner": "iCloud",
+    "what": "iCloud Drive files that are downloaded to this Mac.",
+    "ifDeleted": "Deleting here deletes them from iCloud and all your devices.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Turn on Optimize Mac Storage (System Settings › Apple Account › iCloud › iCloud Drive), or right-click big files in Finder › Remove Download."
+  },
+  {
+    "id": "cloud-storage",
+    "paths": [
+      "~/Library/CloudStorage*"
+    ],
+    "title": "Cloud drive",
+    "owner": "Google Drive, Dropbox, OneDrive or Box",
+    "what": "Files your cloud drive keeps synced on this Mac.",
+    "ifDeleted": "Deleting here deletes them from the cloud and your other devices too.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Right-click files › Remove Download (or Free up space), or make them online-only in the provider's app."
+  },
+  {
+    "id": "container-caches",
+    "paths": [
+      "~/Library/Containers/*/Data/Library/Caches*"
+    ],
+    "title": "App cache",
+    "owner": "The app named in the path",
+    "what": "Temporary files a sandboxed app keeps to work faster.",
+    "ifDeleted": "The app rebuilds what it needs.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Quit the app first."
+  },
+  {
+    "id": "caches",
+    "paths": [
+      "~/Library/Caches*"
+    ],
+    "title": "App caches",
+    "owner": "The app named in the path",
+    "what": "Temporary files apps keep to work faster.",
+    "ifDeleted": "Apps rebuild what they need. Some may be slower the first time.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Quit the app first."
+  },
+  {
+    "id": "logs",
+    "paths": [
+      "~/Library/Logs*"
+    ],
+    "title": "Logs",
+    "owner": "macOS and your apps",
+    "what": "Log files apps write for troubleshooting.",
+    "ifDeleted": "Nothing you'd notice. Only past troubleshooting info is lost.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "saved-state",
+    "paths": [
+      "~/Library/Saved Application State*"
+    ],
+    "title": "Saved window state",
+    "owner": "macOS",
+    "what": "Which windows each app had open, so it can restore them.",
+    "ifDeleted": "Apps open with fresh windows next time.",
+    "verdict": "safe",
+    "comesBack": true
+  },
+  {
+    "id": "trash",
+    "paths": [
+      "~/.Trash*"
+    ],
+    "title": "Trash",
+    "owner": "Finder",
+    "what": "Files you already moved to the Trash. They take space until you empty it.",
+    "ifDeleted": "Gone for good.",
+    "verdict": "safe",
+    "comesBack": false,
+    "howToClean": "Finder › Empty Trash."
+  },
+  {
+    "id": "browser-profile",
+    "paths": [
+      "*/Application Support/Google/Chrome*",
+      "*/Application Support/BraveSoftware*",
+      "*/Application Support/Microsoft Edge*",
+      "*/Application Support/Arc",
+      "*/Application Support/Arc/*"
+    ],
+    "title": "Browser profile",
+    "owner": "Your web browser",
+    "what": "Bookmarks, history, saved passwords and extensions.",
+    "ifDeleted": "You lose everything that isn't synced to your browser account.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Clear cached files from inside the browser (Settings › Privacy › Clear browsing data › Cached images and files)."
+  },
+  {
+    "id": "claude-app",
+    "paths": [
+      "~/Library/Application Support/Claude*"
+    ],
+    "title": "Claude app data",
+    "owner": "Claude desktop app",
+    "what": "Your Claude sessions, settings and sign-in.",
+    "ifDeleted": "Claude signs you out and loses local sessions and settings.",
+    "verdict": "keep",
+    "comesBack": false,
+    "howToClean": "Claude › Settings › This computer › Storage shows what's using space and has Clear cache."
+  },
+  {
+    "id": "claude-code",
+    "paths": [
+      "~/.claude*"
+    ],
+    "title": "Claude Code data",
+    "owner": "Claude Code",
+    "what": "Claude Code settings, chat history, plugins and memory.",
+    "ifDeleted": "Claude Code loses its settings and history.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "codex",
+    "paths": [
+      "~/.codex*"
+    ],
+    "title": "Codex data",
+    "owner": "OpenAI Codex",
+    "what": "Codex settings, chat history and logs.",
+    "ifDeleted": "Codex loses its settings and history.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Look inside: sessions holds old chats, which are usually the bulk.",
+    "broad": true
+  },
+  {
+    "id": "gemini",
+    "paths": [
+      "~/.gemini*"
+    ],
+    "title": "Gemini CLI / Antigravity data",
+    "owner": "Google Gemini CLI or Antigravity",
+    "what": "Settings, chat history and agent files for Google's AI coding tools.",
+    "ifDeleted": "Those tools lose their settings and history.",
+    "verdict": "review",
+    "comesBack": false
+  },
+  {
+    "id": "antigravity",
+    "paths": [
+      "~/.antigravity*"
+    ],
+    "title": "Antigravity editor data",
+    "owner": "Google Antigravity",
+    "what": "Extensions and settings for the Antigravity code editor.",
+    "ifDeleted": "The editor loses its extensions until you reinstall them.",
+    "verdict": "review",
+    "comesBack": false
+  },
+  {
+    "id": "dart-pub-cache",
+    "paths": [
+      "~/.pub-cache*"
+    ],
+    "title": "Dart / Flutter package cache",
+    "owner": "Dart and Flutter",
+    "what": "Packages downloaded for your Dart and Flutter projects.",
+    "ifDeleted": "Downloaded again on the next `flutter pub get`.",
+    "verdict": "safe",
+    "comesBack": true,
+    "howToClean": "Run `flutter pub cache clean` (or `dart pub cache clean`)."
+  },
+  {
+    "id": "build-tool-home",
+    "paths": [
+      "~/.gradle*",
+      "~/.m2*",
+      "~/.cargo*",
+      "~/.yarn*",
+      "~/.bun*",
+      "~/go",
+      "~/go/*"
+    ],
+    "title": "Build tool folder",
+    "owner": "Gradle, Maven, Cargo, Yarn, Bun or Go",
+    "what": "The tool's settings plus its download cache, which is usually most of the size.",
+    "ifDeleted": "The tool loses its settings and may stop working (Cargo and Bun keep their programs here).",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Open it and delete the cache folder inside instead; Roomy marks it Safe.",
+    "broad": true
+  },
+  {
+    "id": "dot-cache",
+    "paths": [
+      "~/.cache*"
+    ],
+    "title": "Command-line tool caches",
+    "owner": "The tool named in the path",
+    "what": "Downloads and temporary files command-line tools keep.",
+    "ifDeleted": "Most tools download what they need again, but some keep AI models here that are large to re-download.",
+    "verdict": "review",
+    "comesBack": true,
+    "howToClean": "Open it and check each folder.",
+    "broad": true
+  },
+  {
+    "id": "dot-local",
+    "paths": [
+      "~/.local*"
+    ],
+    "title": "Locally installed tools",
+    "owner": "Command-line tools (Claude Code, pipx, uv and others)",
+    "what": "Programs installed just for you (in bin) and their data (in share).",
+    "ifDeleted": "Those tools stop working.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "xcode-app",
+    "paths": [
+      "/Applications/Xcode*.app"
+    ],
+    "title": "Xcode",
+    "owner": "Apple",
+    "what": "Apple's developer tools. Often more than 10 GB per copy.",
+    "ifDeleted": "You can't build Apple-platform apps until you reinstall it.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Keep one version and delete older Xcode copies."
+  },
+  {
+    "id": "application",
+    "paths": [
+      "/Applications/*.app",
+      "/Applications/*.app/*",
+      "~/Applications/*.app",
+      "~/Applications/*.app/*"
+    ],
+    "title": "App",
+    "owner": "The app's developer",
+    "what": "An installed app.",
+    "ifDeleted": "The app is removed. Its settings and data in ~/Library stay behind unless you remove them too.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "If you don't use it, move it to the Trash. Apps with their own uninstaller (Adobe, antivirus, VPNs) should use it instead.",
+    "broad": true
+  },
+  {
+    "id": "developer-data",
+    "paths": [
+      "~/Library/Developer*"
+    ],
+    "title": "Developer tool data",
+    "owner": "Xcode and other developer tools",
+    "what": "Data developer tools keep: builds, simulators, symbols.",
+    "ifDeleted": "Depends on the folder. Look inside for the specific parts.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "group-containers",
+    "paths": [
+      "~/Library/Group Containers/*"
+    ],
+    "title": "Shared app data",
+    "owner": "Apps from the developer named in the path",
+    "what": "Data shared between related apps, such as an app and its widgets.",
+    "ifDeleted": "Those apps may lose data or settings.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "containers",
+    "paths": [
+      "~/Library/Containers/*"
+    ],
+    "title": "App's private folder",
+    "owner": "The app named in the path",
+    "what": "A sandboxed app's own folder: its documents, settings and caches.",
+    "ifDeleted": "That app loses its data and settings. If the app is already uninstalled, this is a leftover and usually safe to delete.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "app-support",
+    "paths": [
+      "~/Library/Application Support/*"
+    ],
+    "title": "App data",
+    "owner": "The app named in the path",
+    "what": "Data an app saves: settings, databases, downloads.",
+    "ifDeleted": "The app may reset or lose data. If the app is already uninstalled, this is a leftover and usually safe to delete.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "user-library",
+    "paths": [
+      "~/Library",
+      "~/Library/*"
+    ],
+    "title": "Library",
+    "owner": "macOS and your apps",
+    "what": "Support files macOS and your apps keep for you.",
+    "ifDeleted": "Depends on the folder. Look inside rather than deleting whole folders here.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "downloads",
+    "paths": [
+      "~/Downloads*"
+    ],
+    "title": "Downloads",
+    "owner": "You",
+    "what": "Files you downloaded.",
+    "ifDeleted": "Only what you remove is gone. Old installers, videos and archives are the usual space hogs.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  },
+  {
+    "id": "personal-files",
+    "paths": [
+      "~/Documents*",
+      "~/Desktop*",
+      "~/Pictures*",
+      "~/Movies*",
+      "~/Music*"
+    ],
+    "title": "Your files",
+    "owner": "You",
+    "what": "Your own documents, images, videos and music.",
+    "ifDeleted": "Gone once you empty the Trash, unless you have a backup.",
+    "verdict": "review",
+    "comesBack": false,
+    "howToClean": "Look for old videos, screen recordings and large archives.",
+    "broad": true
+  },
+  {
+    "id": "macos",
+    "paths": [
+      "/System*",
+      "/usr*",
+      "/bin*",
+      "/sbin*",
+      "/private*",
+      "/Library/Apple*"
+    ],
+    "title": "macOS",
+    "owner": "Apple",
+    "what": "Part of macOS, protected by the system.",
+    "ifDeleted": "macOS won't let you, and you wouldn't want to.",
+    "verdict": "keep",
+    "comesBack": false
+  },
+  {
+    "id": "shared-library",
+    "paths": [
+      "/Library*"
+    ],
+    "title": "Shared support files",
+    "owner": "macOS and installed apps",
+    "what": "Files shared by all users: fonts, audio plugins, printer drivers, app helpers.",
+    "ifDeleted": "Apps or devices that rely on them stop working.",
+    "verdict": "review",
+    "comesBack": false,
+    "broad": true
+  }
+]
