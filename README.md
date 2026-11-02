@@ -6,6 +6,9 @@
 [![Downloads](https://img.shields.io/github/downloads/TusharKarkera22/Roomy/total?color=orange)](https://github.com/TusharKarkera22/Roomy/releases)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-orange)
 [![MIT license](https://img.shields.io/github/license/TusharKarkera22/Roomy?color=orange)](LICENSE)
+[![Website](https://img.shields.io/badge/website-roomy--mac.vercel.app-orange)](https://roomy-mac.vercel.app)
+
+**Website: [roomy-mac.vercel.app](https://roomy-mac.vercel.app)**: the story, an interactive demo, and the download.
 
 Roomy is a free, open-source Mac app that finds what's taking up space on your Mac, explains what each big folder is in plain words, and tells you whether it's safe to delete. It covers caches, Xcode DerivedData and simulators, `node_modules`, Docker and VM disks, local AI models, iPhone backups and duplicate files. It runs 100% offline and is styled like a retro CRT space console, with pixel art.
 

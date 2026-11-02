@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roomy: Free Mac Disk Space Analyzer That Explains What's Safe to Delete</title>
+<meta name="description" content="Find what's taking up space on your Mac. Roomy is a free, open-source app that explains every big folder (caches, Xcode, node_modules, Docker) and tells you what's safe to delete. 100% offline.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Tushar Karkera">
+<link rel="canonical" href="https://roomy-mac.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Roomy">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://roomy-mac.vercel.app/">
+<meta property="og:title" content="Roomy: where did my Mac's disk space go?">
+<meta property="og:description" content="A free, offline Mac app that explains every big folder on your disk and tells you what's safe to delete.">
+<meta property="og:image" content="https://roomy-mac.vercel.app/assets/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Roomy: a pixel-art CRT with the words 100% offline, free, open source">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Roomy: where did my Mac's disk space go?">
+<meta name="twitter:description" content="A free, offline Mac app that explains every big folder on your disk and tells you what's safe to delete.">
+<meta name="twitter:image" content="https://roomy-mac.vercel.app/assets/social-preview.png">
+<meta name="theme-color" content="#120D0B">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="image" href="/assets/film-poster.jpg">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://roomy-mac.vercel.app/#app",
+      "name": "Roomy",
+      "description": "Free, open-source Mac disk space analyzer that explains what every big folder is and whether it's safe to delete.",
+      "operatingSystem": "macOS 14 or later",
+      "applicationCategory": "UtilitiesApplication",
+      "applicationSubCategory": "Disk space analyzer",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "downloadUrl": "https://github.com/TusharKarkera22/Roomy/releases/latest/download/Roomy-0.1.0.dmg",
+      "softwareVersion": "0.1.0",
+      "fileSize": "2MB",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "image": "https://roomy-mac.vercel.app/assets/social-preview.png",
+      "screenshot": "https://roomy-mac.vercel.app/assets/film-poster.jpg",
+      "url": "https://roomy-mac.vercel.app/",
+      "sameAs": ["https://github.com/TusharKarkera22/Roomy"],
+      "author": { "@type": "Person", "name": "Tushar Karkera", "url": "https://github.com/TusharKarkera22" }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://roomy-mac.vercel.app/#website",
+      "url": "https://roomy-mac.vercel.app/",
+      "name": "Roomy",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://roomy-mac.vercel.app/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is taking up space on my Mac?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Usually things you never see: app caches in ~/Library/Caches, Xcode build data and simulators, node_modules folders, Docker and virtual machine disks, local AI models, old iPhone backups and duplicate downloads. Roomy scans your home folder in seconds and lists the biggest ones first, with an explanation for each." } },
+        { "@type": "Question", "name": "Is it safe to delete ~/Library/Caches on a Mac?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The contents, yes: apps rebuild their caches as needed, though some may be slower the first time. The folder itself should stay, so Roomy keeps the folder and moves what's inside to the Trash. Quit apps first to clear more." } },
+        { "@type": "Question", "name": "How do I free up space from Xcode?",
+          "acceptedAnswer": { "@type": "Answer", "text": "DerivedData and iOS DeviceSupport are safe to delete: Xcode rebuilds or re-copies them. Simulator devices and archives are worth a look first. Running xcrun simctl delete unavailable removes simulators for iOS versions you no longer have." } },
+        { "@type": "Question", "name": "Can I delete node_modules, Docker images or Ollama models?",
+          "acceptedAnswer": { "@type": "Answer", "text": "node_modules comes back with npm install. For Docker, don't delete its disk file; run docker system prune -a instead. For Ollama, ollama rm removes one model at a time. Roomy shows the right command for each." } },
+        { "@type": "Question", "name": "How is Roomy different from DaisyDisk, GrandPerspective or CleanMyMac?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Disk maps show you what's big. Roomy also tells you what each folder is, what happens if you delete it, and whether it comes back on its own. It's free, open source, runs offline, and only removes things when you click." } },
+        { "@type": "Question", "name": "Does Roomy upload my files?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Roomy has no network code at all. It reads file names and sizes on your Mac and nothing leaves it." } }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+:root {
+  --screen: #120D0B;
+  --panel: #1B1411;
+  --phosphor: #F6E7C8;
+  --dim: #A38F78;
+  --line: rgba(246, 231, 200, 0.2);
+  --amber: #FFB238;
+  --orange: #FF6A1F;
+  --red: #FF3D2E;
+  --magenta: #FF4FD8;
+  --blue: #8FB4FF;
+  --green: #8CFF6A;
+  --plastic: #5C220A;
+  --bezel: linear-gradient(135deg, #F29447, #D2601F 55%, #9A3812);
+  --mono: "IBM Plex Mono", Monaco, ui-monospace, monospace;
+  --gutter: clamp(16px, 5vw, 72px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--screen);
+  color: var(--phosphor);
+  font: 400 16px/1.6 var(--mono);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: var(--screen); }
+a { color: inherit; }
+img, video, svg { display: block; }
+
+/* The space scene and the glass of the tube */
+#space { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.6) 100%); }
+.scanlines { position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,.12) 0 1px, transparent 1px 3px); }
+main, footer { position: relative; z-index: 2; }
+
+/* Dot-matrix text and pixel sprites */
+/* .px fills its width; .px.h is a fixed height (--h) with the width following the text. */
+.px { display: block; width: 100%; line-height: 0; max-width: 100%; }
+.px svg { width: 100%; height: auto; overflow: visible; }
+.px.h { display: inline-block; width: auto; height: var(--h); }
+.px.h svg { width: auto; height: var(--h); max-width: none; }
+.glow-amber { filter: drop-shadow(0 0 6px rgba(255,178,56,.7)); }
+.glow-green { filter: drop-shadow(0 0 6px rgba(140,255,106,.6)); }
+.glow-red { filter: drop-shadow(0 0 7px rgba(255,61,46,.7)); }
+.glow-magenta { filter: drop-shadow(0 0 6px rgba(255,79,216,.6)); }
+.glow-phosphor { filter: drop-shadow(0 0 5px rgba(246,231,200,.45)); }
+.sprite { display: inline-block; line-height: 0; }
+.sprite svg { width: 100%; height: auto; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Nav */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; gap: 28px;
+  padding: 14px var(--gutter); transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
+.nav.solid { background: rgba(18,13,11,.86); backdrop-filter: blur(10px); border-color: var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand .sprite { width: 26px; }
+.brand .px { width: 92px; }
+.nav-links { display: flex; gap: 22px; margin-left: auto; }
+.nav-links a { text-decoration: none; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); transition: color .2s; }
+.nav-links a:hover { color: var(--amber); }
+.nav-actions { display: flex; gap: 10px; }
+.progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 41; background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 11px 20px; border-radius: 999px;
+  border: 1px solid var(--amber); color: var(--amber); background: transparent; text-decoration: none; cursor: pointer;
+  font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  transition: background .2s, box-shadow .2s, transform .15s; }
+.btn:hover { background: rgba(255,178,56,.12); box-shadow: 0 0 18px rgba(255,178,56,.35); }
+.btn:active { transform: scale(.97); }
+.btn.primary { background: var(--amber); color: var(--screen); box-shadow: 0 0 22px rgba(255,178,56,.45); }
+.btn.primary:hover { background: #ffc35e; box-shadow: 0 0 34px rgba(255,178,56,.7); }
+.btn.big { padding: 17px 30px; font-size: 15px; }
+.btn.small { padding: 8px 14px; font-size: 11px; }
+.btn .count { padding-left: 10px; border-left: 1px solid currentColor; opacity: .85; }
+.btn .count:empty { display: none; }
+.btn:focus-visible, .row:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+/* Panels: the app's console modules */
+.panel { background: rgba(27,20,17,.9); border: 1px solid rgba(246,231,200,.28); border-radius: 14px;
+  box-shadow: 0 0 30px rgba(255,178,56,.1), 0 30px 60px rgba(0,0,0,.45); overflow: hidden; position: relative; }
+.panel-head { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+.lights { display: flex; gap: 5px; }
+.lights i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); opacity: .85; }
+.lights i:nth-child(2) { background: var(--amber); }
+.lights i:nth-child(3) { background: var(--green); }
+.ticks { margin-left: auto; width: 60px; height: 9px;
+  background: repeating-linear-gradient(90deg, rgba(163,143,120,.6) 0 1.5px, transparent 1.5px 4px);
+  -webkit-mask: linear-gradient(to top, #000 50%, transparent 50%), repeating-linear-gradient(90deg, #000 0 1.5px, transparent 1.5px 16px);
+          mask: linear-gradient(to top, #000 50%, transparent 50%), repeating-linear-gradient(90deg, #000 0 1.5px, transparent 1.5px 16px); }
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(34px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
+
+/* Hero */
+.hero { min-height: 100svh; display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.15fr); gap: clamp(32px, 5vw, 80px);
+  align-items: center; padding: 110px var(--gutter) 70px; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .18em; color: var(--green);
+  text-shadow: 0 0 10px rgba(140,255,106,.5); text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+.hero .logo { width: min(100%, 470px); margin: 26px 0 22px; }
+.hero h1 { margin: 0 0 16px; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.15; font-weight: 700; letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--amber); text-shadow: 0 0 18px rgba(255,178,56,.45); }
+.lead { color: var(--dim); font-size: clamp(15px, 1.25vw, 18px); max-width: 36em; margin: 0 0 30px; }
+.lead strong { color: var(--phosphor); font-weight: 500; }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.meta { margin-top: 16px; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
+
+/* The TV */
+.tv { position: relative; border-radius: 36px; padding: 22px 22px 0; background: var(--bezel);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.35), inset 0 -3px 0 rgba(0,0,0,.25), 0 40px 90px rgba(0,0,0,.6), 0 0 80px rgba(255,106,31,.18);
+  transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, -6deg)); transition: transform .4s ease; }
+.tv::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255,255,255,.22), transparent 45%); }
+.tv-screen { position: relative; border-radius: 22px; overflow: hidden; aspect-ratio: 1856 / 974; background: #000;
+  border: 4px solid rgba(0,0,0,.78); box-shadow: inset 0 0 40px #000; }
+.tv-screen video { width: 100%; height: 100%; object-fit: cover; }
+.tv-screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,.18) 0 1px, transparent 1px 3px),
+              radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55)),
+              linear-gradient(160deg, rgba(255,255,255,.08), transparent 35%); }
+.tv-foot { display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 12px; }
+.tv-foot .px { width: 92px; }
+.tv-foot small { font-size: 10px; letter-spacing: .2em; color: var(--plastic); }
+.tv-foot .power { margin-left: auto; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+.knob { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--plastic); position: relative;
+  background: radial-gradient(circle at 30% 30%, #FFC08A, #8E3410 75%); box-shadow: 0 2px 4px rgba(0,0,0,.4); }
+.knob::after { content: ""; position: absolute; left: 50%; top: 4px; width: 2px; height: 9px; margin-left: -1px; background: var(--plastic); }
+.sound { position: absolute; right: 14px; top: 14px; z-index: 2; }
+
+/* Story chapters */
+.chapter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(32px, 6vw, 96px); align-items: center;
+  min-height: 92svh; padding: 100px var(--gutter); }
+.chapter.flip { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+.chapter.flip .copy { order: 2; }
+.label { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.label::after { content: ""; flex: 1; max-width: 140px; height: 1px; background: var(--line); }
+.copy h2 { margin: 0 0 22px; font-weight: 400; line-height: 0; }
+.copy h2 .px { width: min(100%, var(--w, 520px)); }
+.copy p { color: var(--dim); font-size: clamp(15px, 1.2vw, 17px); margin: 0 0 16px; max-width: 34em; }
+/* Keeps the story readable when the planet drifts behind it. */
+.chapter .copy, .section-head, .open .copy { text-shadow: 0 1px 2px #000, 0 0 18px rgba(18,13,11,.95), 0 0 40px rgba(18,13,11,.9); }
+.copy p strong { color: var(--phosphor); font-weight: 500; }
+code { font-family: var(--mono); color: var(--green); background: rgba(140,255,106,.08); padding: 1px 6px; border-radius: 4px; font-size: .92em; }
+
+/* Ch.1 — the full disk */
+.full { padding: 30px; }
+.full .big { width: 100%; }
+.leds { display: grid; grid-template-columns: repeat(50, 1fr); gap: 3px; height: 26px; margin: 22px 0 8px; }
+.leds i { background: rgba(246,231,200,.08); border-radius: 1px; transition: background .2s, box-shadow .2s; }
+.leds i.on { background: var(--red); box-shadow: 0 0 8px rgba(255,61,46,.6); }
+.leds-label { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .14em; color: var(--dim); }
+.mystery { display: grid; gap: 8px; margin-top: 26px; }
+.mystery div { display: grid; grid-template-columns: 22px 1fr auto auto; gap: 12px; align-items: center; padding: 9px 12px;
+  border: 1px dashed rgba(246,231,200,.18); border-radius: 8px; font-size: 14px; }
+.mystery .sprite { width: 22px; }
+.mystery b { font-weight: 500; }
+.mystery span { color: var(--dim); font-size: 13px; }
+.glitch { animation: glitch 3.2s infinite steps(1); }
+.mystery div:nth-child(2) .glitch { animation-delay: .7s; }
+.mystery div:nth-child(3) .glitch { animation-delay: 1.4s; }
+.mystery div:nth-child(4) .glitch { animation-delay: 2.1s; }
+@keyframes glitch {
+  0%, 92%, 100% { transform: none; text-shadow: none; }
+  93% { transform: translateX(-3px); text-shadow: 2px 0 var(--red), -2px 0 var(--blue); }
+  95% { transform: translateX(3px); text-shadow: -2px 0 var(--red), 2px 0 var(--blue); }
+}
+
+/* Tags */
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .06em; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); border: 1px solid color-mix(in srgb, var(--c) 85%, transparent); white-space: nowrap; }
+.tag .sprite { width: 10px; }
+.tag.safe { --c: var(--green); } .tag.review { --c: var(--amber); } .tag.keep { --c: var(--red); } .tag.unknown { --c: var(--dim); } .tag.locked { --c: var(--magenta); }
+
+/* Ch.2 — the scan */
+.scan { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 26px; padding: 26px; align-items: center; }
+.scan canvas { width: 100%; aspect-ratio: 1; }
+.counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 16px 0; }
+.counter { border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; }
+.counter small { display: block; font-size: 10px; letter-spacing: .16em; color: var(--dim); margin-bottom: 9px; }
+.counter.wide { grid-column: 1 / -1; }
+.term { font-size: 12px; color: var(--green); text-shadow: 0 0 8px rgba(140,255,106,.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chaser { display: grid; grid-template-columns: repeat(36, 1fr); gap: 3px; height: 11px; margin-top: 14px; }
+.chaser i { background: var(--amber); opacity: .1; animation: chase 2.2s ease-in-out infinite; }
+@keyframes chase { 0%, 100% { opacity: .1; } 12% { opacity: 1; box-shadow: 0 0 8px var(--amber); } 30% { opacity: .1; } }
+
+/* Ch.3 — the explorer demo */
+.explorer { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.rows { border-right: 1px solid var(--line); }
+.row { width: 100%; display: grid; grid-template-columns: 3px 26px minmax(0, 1fr) auto 78px; gap: 12px; align-items: center;
+  padding: 11px 16px 11px 0; background: none; border: 0; border-bottom: 1px solid rgba(246,231,200,.07);
+  color: var(--phosphor); font: inherit; text-align: left; cursor: pointer; transition: background .2s; }
+.row:hover { background: rgba(255,178,56,.05); }
+.row .sel { height: 30px; background: transparent; }
+.row.active { background: rgba(255,178,56,.1); }
+.row.active .sel { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.row.active .name { color: var(--amber); }
+.row > .sprite { width: 24px; }
+.row .name { font-size: 14px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .name small { color: var(--dim); font-size: 11.5px; margin-left: 6px; }
+.row .size { font-size: 13px; text-align: right; }
+.bar { position: relative; height: 6px; margin-top: 7px;
+  background: repeating-linear-gradient(90deg, rgba(246,231,200,.08) 0 2.4px, transparent 2.4px 4px); }
+.bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--c) 0 2.4px, transparent 2.4px 4px);
+  transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+.info { padding: 20px; }
+.info-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+.info-head .sprite { width: 42px; filter: drop-shadow(0 0 6px rgba(255,178,56,.5)); }
+.info-head b { display: block; font-size: 16px; margin-bottom: 6px; }
+.path { font-size: 11px; color: var(--dim); margin: 10px 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.info h3 { margin: 0 0 12px; font-size: 15px; color: var(--amber); text-shadow: 0 0 10px rgba(255,178,56,.4); }
+.field { margin-bottom: 11px; }
+.field small { display: block; font-size: 10px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.field div { font-size: 13px; line-height: 1.5; }
+.hint { font-size: 12px; color: var(--dim); margin-top: 14px; }
+
+/* Ch.4 — the clean demo */
+.clean { padding: 22px; min-height: 360px; }
+.clean .row { cursor: default; }
+.clean .row:hover { background: rgba(255,178,56,.1); }
+.clean-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.clean .field { margin-top: 16px; }
+.modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 3; }
+.modal.show { opacity: 1; pointer-events: auto; }
+.modal .panel { width: min(92%, 470px); border-color: rgba(255,61,46,.5); transform: scale(.95); transition: transform .2s; }
+.modal.show .panel { transform: none; }
+.modal-body { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 20px; }
+.modal-body .sprite { width: 40px; }
+.modal-body p { margin: 0 0 10px; font-size: 13px; color: var(--dim); }
+.modal-body p b { color: var(--phosphor); font-size: 14px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.toast { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 13px 16px; border-radius: 10px; font-size: 13px;
+  border: 1.5px solid rgba(140,255,106,.8); box-shadow: 0 0 18px rgba(140,255,106,.35); background: var(--panel);
+  opacity: 0; transform: translateY(10px); transition: opacity .3s, transform .3s; }
+.toast.show { opacity: 1; transform: none; }
+.toast .sprite { width: 20px; }
+
+/* Features */
+.section { padding: 110px var(--gutter); }
+.section-head { max-width: 720px; margin-bottom: 48px; }
+.section-head h2 { margin: 0 0 18px; line-height: 0; }
+.section-head h2 .px { width: min(100%, var(--w, 560px)); }
+.section-head p { color: var(--dim); margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+.card { padding: 24px; border-radius: 14px; border: 1px solid var(--line); background: rgba(27,20,17,.82);
+  transition: border-color .25s, transform .25s, box-shadow .25s; }
+.card:hover { border-color: rgba(255,178,56,.6); transform: translateY(-4px); box-shadow: 0 0 26px rgba(255,178,56,.16); }
+.card .icon { height: 40px; display: flex; align-items: flex-end; gap: 4px; margin-bottom: 18px; }
+.card .icon .sprite { width: 36px; }
+.card h3 { margin: 0 0 8px; font-size: 15px; letter-spacing: .02em; }
+.card p { margin: 0; color: var(--dim); font-size: 13.5px; line-height: 1.55; }
+
+/* Open */
+.open { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 90px); align-items: center; }
+.pillars { display: grid; gap: 18px; margin: 28px 0 30px; }
+.pillar { display: grid; grid-template-columns: 38px 1fr; gap: 14px; }
+.pillar .sprite { width: 30px; margin-top: 3px; }
+.pillar b { display: block; margin-bottom: 4px; }
+.pillar span { color: var(--dim); font-size: 14px; }
+pre { margin: 0; padding: 22px; overflow-x: auto; font: 13px/1.65 var(--mono); }
+.k { color: var(--blue); } .s { color: var(--phosphor); } .v { color: var(--green); } .p { color: var(--dim); }
+
+/* FAQ */
+.faq { display: grid; gap: 12px; max-width: 900px; }
+.faq details { border: 1px solid var(--line); border-radius: 12px; background: rgba(27,20,17,.86); transition: border-color .2s; }
+.faq details[open] { border-color: rgba(255,178,56,.5); }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 22px; font-weight: 500; display: flex; gap: 14px; align-items: baseline; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "+"; color: var(--amber); font-weight: 700; width: 12px; flex: none; }
+.faq details[open] summary::before { content: "−"; }
+.faq summary:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; border-radius: 12px; }
+.faq p { margin: 0; padding: 0 22px 20px 48px; color: var(--dim); font-size: 14.5px; }
+
+/* Download */
+.download { text-align: center; }
+.download .panel { max-width: 880px; margin: 0 auto; }
+.dl-body { padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 18px; }
+.dl-body .sprite { width: 96px; filter: drop-shadow(0 0 18px rgba(255,178,56,.5)); animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+.dl-body .px { width: min(100%, 520px); }
+.dl-body .meta { margin: 0; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; width: 100%; text-align: left; }
+.step { border: 1px solid var(--line); border-radius: 10px; padding: 16px; font-size: 13px; color: var(--dim); }
+.step b { display: grid; place-items: center; width: 26px; height: 26px; margin-bottom: 10px; border-radius: 5px; background: var(--magenta);
+  color: var(--screen); box-shadow: 0 0 10px rgba(255,79,216,.5); }
+.step em { font-style: normal; color: var(--phosphor); }
+.source { width: 100%; margin-top: 10px; text-align: left; }
+.source-line { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.source-line code { flex: 1; min-width: 0; background: none; padding: 0; overflow-x: auto; white-space: nowrap; }
+
+footer { padding: 46px var(--gutter) 60px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 18px 30px;
+  align-items: center; color: var(--dim); font-size: 13px; background: rgba(18,13,11,.8); }
+footer .brand .px { width: 80px; }
+footer nav { display: flex; flex-wrap: wrap; gap: 20px; margin-left: auto; }
+footer a { text-decoration: none; } footer a:hover { color: var(--amber); }
+
+@media (max-width: 960px) {
+  .hero, .chapter, .chapter.flip, .open { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .chapter.flip .copy { order: 0; }
+  .hero { padding-top: 96px; }
+  .explorer { grid-template-columns: minmax(0, 1fr); }
+  .rows { border-right: 0; border-bottom: 1px solid var(--line); }
+  .nav-links { display: none; }
+  .nav-actions { margin-left: auto; }
+}
+@media (max-width: 620px) {
+  .nav .nav-actions .btn.primary { display: none; }
+  .scan { grid-template-columns: minmax(0, 1fr); }
+  .scan canvas { max-width: 260px; margin: 0 auto; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .row { grid-template-columns: 3px 22px minmax(0, 1fr) 64px; }
+  .row .tag { display: none; }
+  .tv { padding: 12px 12px 0; border-radius: 24px; }
+  .tv-screen { border-radius: 14px; }
+  .tv-foot small { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .glitch, .chaser i, .dl-body .sprite { animation: none; }
+}
+</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
+</head>
+<body>
+<canvas id="space" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+<div class="progress" id="progress"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Roomy home">
+    <span class="sprite" data-sprite="mascot"></span>
+    <span class="px glow-amber" data-px="ROOMY" data-color="amber" data-ab></span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#story">Story</a>
+    <a href="#features">Features</a>
+    <a href="#open">Open source</a>
+    <a href="#faq">FAQ</a>
+    <a href="#download">Download</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="btn small" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">★ Star <span class="count" data-stars></span></a>
+    <a class="btn small primary" href="#download">Download</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="copy">
+      <span class="eyebrow reveal">100% offline · free · open source</span>
+      <div class="logo reveal d1"><span aria-hidden="true" class="px glow-amber" data-px="ROOMY" data-color="amber" data-ab></span></div>
+      <h1 class="reveal d1">Where did my <em>space</em> go?</h1>
+      <p class="lead reveal d2">Roomy scans your Mac in seconds, <strong>explains every big folder in plain words</strong>, and tells you what's safe to delete. Caches, Xcode, <code>node_modules</code>, Docker, AI models, iPhone backups and duplicates.</p>
+      <div class="cta reveal d3">
+        <a class="btn primary big" href="https://github.com/TusharKarkera22/Roomy/releases/latest/download/Roomy-0.1.0.dmg" data-download>↓ Download for Mac</a>
+        <a class="btn big" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">★ Star on GitHub <span class="count" data-stars></span></a>
+      </div>
+      <p class="meta reveal d3">v0.1.0 · macOS 14 or later · Apple Silicon &amp; Intel · 2 MB</p>
+    </div>
+
+    <div class="tv reveal d2" id="tv">
+      <div class="tv-screen">
+        <video id="film" autoplay muted loop playsinline preload="metadata" poster="/assets/film-poster.jpg"
+               aria-label="Roomy launch film: scanning a Mac, explaining folders, and clearing a safe cache">
+          <source src="/assets/roomy-film.mp4" type="video/mp4">
+        </video>
+        <button class="btn small sound" id="sound" aria-pressed="false">🔈 Sound on</button>
+      </div>
+      <div class="tv-foot">
+        <span class="px" data-px="ROOMY-1" data-color="plastic" data-noglow></span>
+        <small>DISK SPACE EXPLAINER</small>
+        <span class="power"></span>
+        <span class="knob"></span><span class="knob"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CH.01 -->
+  <section class="chapter" id="story">
+    <div class="copy">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.01 / THE PROBLEM" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:470px"><span class="sr-only">Disk almost full: what's taking up space on your Mac?</span><span aria-hidden="true" class="px glow-red" data-px="DISK ALMOST FULL." data-color="red" data-ab></span></h2>
+      <p class="reveal d2">It started with that grey notification. <strong>The Mac was 85% full</strong>, and <code>~/Library</code> alone was 96 GB.</p>
+      <p class="reveal d2">Every disk tool I tried showed the same thing: a giant block called <strong>Library</strong>, filled with folders called <strong>Containers</strong>, <strong>Developer</strong> and <strong>Caches</strong>. Big, yes. But what are they? And which ones can go?</p>
+    </div>
+    <div class="panel full reveal d2" id="full">
+      <div class="big"><span class="px glow-red" data-px="85% FULL" data-color="red" data-ab></span></div>
+      <div class="leds" id="leds" aria-hidden="true"></div>
+      <div class="leds-label"><span>USED</span><span>71.8 GB FREE OF 494 GB</span></div>
+      <div class="mystery" aria-label="Folders without explanations">
+        <div><span class="sprite" data-sprite="folder"></span><b class="glitch">Containers</b><span>40.8 GB</span><span class="tag unknown"><span class="sprite" data-sprite="question" data-ink="dim"></span>UNKNOWN</span></div>
+        <div><span class="sprite" data-sprite="folder"></span><b class="glitch">Developer</b><span>26.7 GB</span><span class="tag unknown"><span class="sprite" data-sprite="question" data-ink="dim"></span>UNKNOWN</span></div>
+        <div><span class="sprite" data-sprite="folder"></span><b class="glitch">Caches</b><span>12.2 GB</span><span class="tag unknown"><span class="sprite" data-sprite="question" data-ink="dim"></span>UNKNOWN</span></div>
+        <div><span class="sprite" data-sprite="folder"></span><b class="glitch">Application Support</b><span>7.7 GB</span><span class="tag unknown"><span class="sprite" data-sprite="question" data-ink="dim"></span>UNKNOWN</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CH.02 -->
+  <section class="chapter flip" id="scan">
+    <div class="copy">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.02 / THE SCAN" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:520px"><span class="sr-only">One scan in 17 seconds: a fast Mac disk space analyzer</span><span aria-hidden="true" class="px glow-amber" data-px="ONE SCAN. 17 SECONDS." data-color="amber" data-ab></span></h2>
+      <p class="reveal d2">So Roomy measures everything <strong>once</strong>: every folder, every file of 1 MB or more, with small files counted per folder. After that, opening any folder is instant.</p>
+      <p class="reveal d2">It stays on the disk you started on, so a connected iPhone or external drive never stalls the scan, and anything macOS keeps closed is marked <span class="tag locked">LOCKED</span> instead of silently missing.</p>
+    </div>
+    <div class="panel reveal d2">
+      <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-amber" data-px="SCANNING" data-color="amber"></span><span class="ticks"></span></div>
+      <div class="scan" id="scanPanel">
+        <canvas id="radar" width="600" height="600" aria-label="Radar animation"></canvas>
+        <div>
+          <span style="--h:28px" class="px h glow-amber" data-px="~/LIBRARY" data-color="amber" data-ab></span>
+          <div class="counters">
+            <div class="counter"><small>FILES</small><span style="--h:24px" class="px h glow-phosphor" id="cFiles"></span></div>
+            <div class="counter"><small>MEASURED</small><span style="--h:24px" class="px h glow-phosphor" id="cBytes"></span></div>
+            <div class="counter wide"><small>TIME</small><span style="--h:24px" class="px h glow-green" id="cTime"></span></div>
+          </div>
+          <div class="term" id="term">&gt; ready</div>
+          <div class="chaser" id="chaser" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CH.03 -->
+  <section class="chapter" id="explain">
+    <div class="copy">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.03 / THE ANSWER" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:560px"><span class="sr-only">Every folder explained: what's safe to delete on a Mac</span><span aria-hidden="true" class="px glow-amber" data-px="EVERY FOLDER, EXPLAINED." data-color="amber" data-ab></span></h2>
+      <p class="reveal d2">This is the part disk maps skip. For every big folder, Roomy tells you <strong>what it is</strong>, <strong>who it belongs to</strong>, <strong>what happens if you delete it</strong>, and <strong>whether it comes back on its own</strong>.</p>
+      <p class="reveal d2">Then it labels it <span class="tag safe">SAFE</span> <span class="tag review">REVIEW</span> or <span class="tag keep">KEEP</span>, and points to the better way to clean it when there is one. <strong>Click a folder</strong> to try it. These are the real results from that 85%-full Mac.</p>
+    </div>
+    <div class="panel reveal d2">
+      <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-amber" data-px="BIGGEST WINS IN ~/LIBRARY" data-color="amber"></span><span class="ticks"></span></div>
+      <div class="explorer">
+        <div class="rows" id="rows" role="listbox" aria-label="Biggest folders"></div>
+        <div class="info" id="info" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CH.04 -->
+  <section class="chapter flip" id="clean">
+    <div class="copy">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.04 / THE CLEAN-UP" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:420px"><span class="sr-only">Safe to delete? Clean it in one click</span><span aria-hidden="true" class="px glow-green" data-px="SAFE? ONE CLICK." data-color="green" data-ab></span></h2>
+      <p class="reveal d2">When something is Safe, cleaning it is one button, with a confirmation that says exactly what will happen. Roomy <strong>moves things to the Trash</strong>, never straight to oblivion, and re-measures so the numbers update right away.</p>
+      <p class="reveal d2">Folders macOS expects to exist, like <code>~/Library/Caches</code>, are kept: Roomy empties what's inside. Top-level folders like <code>~/Documents</code> are never touched. <strong>Try it.</strong></p>
+    </div>
+    <div class="panel reveal d2">
+      <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-amber" data-px="INFO" data-color="amber"></span><span class="ticks"></span></div>
+      <div class="clean" id="cleanPanel">
+        <div class="row active" aria-hidden="true">
+          <span class="sel"></span><span class="sprite" data-sprite="folder"></span>
+          <span><span class="name">Caches <small>App caches</small></span><span class="bar" style="--c:var(--green)"><i id="cleanBar" style="width:99%"></i></span></span>
+          <span class="tag safe"><span class="sprite" data-sprite="check" data-ink="green"></span>SAFE</span>
+          <span class="size" id="cleanSize">12.23 GB</span>
+        </div>
+        <div class="field"><small>If you delete it</small><div>Apps rebuild what they need. Some may be slower the first time.</div></div>
+        <div class="field"><small>Comes back on its own</small><div>Yes</div></div>
+        <div class="clean-actions">
+          <button class="btn small" id="revealBtn">Reveal in Finder</button>
+          <button class="btn small primary" id="trashBtn">Trash contents…</button>
+        </div>
+        <div class="toast" id="toast" role="status"><span class="sprite" data-sprite="trash"></span><span id="toastText"></span></div>
+
+        <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+          <div class="panel">
+            <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-red" data-px="MOVE TO TRASH?" data-color="red"></span><span class="ticks"></span></div>
+            <div class="modal-body">
+              <span class="sprite" data-sprite="trash"></span>
+              <div>
+                <p id="modalTitle"><b>Move everything inside “Caches” (12.23 GB) to the Trash?</b></p>
+                <p>The folder itself stays. You can put things back from the Trash until you empty it.</p>
+                <div class="modal-actions">
+                  <button class="btn small" id="cancelBtn">Cancel</button>
+                  <button class="btn small primary" id="confirmBtn">Move to Trash</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-head">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.05 / THE TOOLBOX" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:500px"><span class="sr-only">Everything else: report, largest files and duplicate finder</span><span aria-hidden="true" class="px glow-amber" data-px="EVERYTHING ELSE." data-color="amber" data-ab></span></h2>
+      <p class="reveal d2">Small tools that each answer one question you'd otherwise google at midnight.</p>
+    </div>
+    <div class="grid">
+      <article class="card reveal"><div class="icon"><span class="sprite" data-sprite="file"></span></div><h3>The report</h3><p>One screen after every scan: what's Safe to clean, what's worth a look, what macOS kept locked, and the biggest wins first.</p></article>
+      <article class="card reveal d1"><div class="icon"><span class="sprite" data-sprite="magnifier"></span></div><h3>Largest files inside</h3><p>A file-level breakdown of any folder, however deep. Finally see which single files make Library 90 GB.</p></article>
+      <article class="card reveal d2"><div class="icon"><span class="sprite" data-sprite="file"></span><span class="sprite" data-sprite="file"></span></div><h3>Duplicate finder</h3><p>Identical files of 1 MB or more, compared by their full contents. The last copy of anything can never be trashed.</p></article>
+      <article class="card reveal d3"><div class="icon"><span class="sprite" data-sprite="lock"></span></div><h3>Your choice of access</h3><p>Give Full Disk Access for a complete scan, or let macOS ask folder by folder. A walkthrough shows exactly where the switch is.</p></article>
+      <article class="card reveal"><div class="icon"><span class="sprite" data-sprite="trash"></span></div><h3>Trash first</h3><p>Nothing is deleted directly. The only permanent action is Empty Trash, which asks Finder to do it, after a clear warning.</p></article>
+      <article class="card reveal d1"><div class="icon"><span class="sprite" data-sprite="folder"></span></div><h3>The right command</h3><p>Some things shouldn't be deleted by hand. Roomy says when to run <code>docker system prune</code>, <code>ollama rm</code> or <code>xcrun simctl delete unavailable</code> instead.</p></article>
+      <article class="card reveal d2"><div class="icon"><span class="sprite" data-sprite="house"></span></div><h3>Stays on your disk</h3><p>Connected iPhones and other drives mounted inside your folders are marked Other disk and skipped, so a scan never hangs on them.</p></article>
+      <article class="card reveal d3"><div class="icon"><span class="sprite" data-sprite="mascot"></span></div><h3>A 1985 space console</h3><p>Dot-matrix type, pixel art, LED bars and scanlines. Disk cleanup doesn't have to look like a tax form.</p></article>
+    </div>
+  </section>
+
+  <!-- OPEN -->
+  <section class="section open" id="open">
+    <div class="copy">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.06 / THE PROMISE" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:520px"><span class="sr-only">Yours, offline and open source</span><span aria-hidden="true" class="px glow-green" data-px="YOURS. OFFLINE. OPEN." data-color="green" data-ab></span></h2>
+      <div class="pillars">
+        <div class="pillar reveal d1"><span class="sprite" data-sprite="check" data-ink="green"></span><div><b>100% offline</b><span>Roomy has no network code at all. It reads names and sizes on your Mac, and nothing leaves it.</span></div></div>
+        <div class="pillar reveal d2"><span class="sprite" data-sprite="lock"></span><div><b>Free and MIT licensed</b><span>No subscription, no trial, no "pro" tier. Read every line of it on GitHub.</span></div></div>
+        <div class="pillar reveal d3"><span class="sprite" data-sprite="question" data-ink="amber"></span><div><b>Explanations anyone can improve</b><span>All ~80 explanations live in one plain file. Know what a mystery folder is? Add one entry and everyone gets the answer.</span></div></div>
+      </div>
+      <div class="cta reveal d3">
+        <a class="btn" href="https://github.com/TusharKarkera22/Roomy/blob/main/Sources/RoomyCore/rules.json" target="_blank" rel="noopener">Read rules.json</a>
+        <a class="btn primary" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">★ Star on GitHub <span class="count" data-stars></span></a>
+      </div>
+    </div>
+    <div class="panel reveal d2">
+      <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-amber" data-px="RULES.JSON" data-color="amber"></span><span class="ticks"></span></div>
+<pre aria-label="An entry from rules.json"><span class="p">{</span>
+  <span class="k">"id"</span><span class="p">:</span> <span class="s">"xcode-derived-data"</span><span class="p">,</span>
+  <span class="k">"paths"</span><span class="p">:</span> <span class="p">[</span><span class="s">"~/Library/Developer/Xcode/DerivedData*"</span><span class="p">],</span>
+  <span class="k">"title"</span><span class="p">:</span> <span class="s">"Xcode build data"</span><span class="p">,</span>
+  <span class="k">"what"</span><span class="p">:</span> <span class="s">"Build output and code indexes for your Xcode projects."</span><span class="p">,</span>
+  <span class="k">"ifDeleted"</span><span class="p">:</span> <span class="s">"Xcode rebuilds it the next time you build. The first build is slower."</span><span class="p">,</span>
+  <span class="k">"verdict"</span><span class="p">:</span> <span class="v">"safe"</span><span class="p">,</span>
+  <span class="k">"comesBack"</span><span class="p">:</span> <span class="v">true</span>
+<span class="p">}</span></pre>
+    </div>
+  </section>
+
+  <!-- FAQ: the same questions as the FAQPage structured data in the head -->
+  <section class="section" id="faq">
+    <div class="section-head">
+      <div class="label reveal"><span style="--h:12px" class="px h glow-green" data-px="CH.07 / THE QUESTIONS" data-color="green"></span></div>
+      <h2 class="reveal d1" style="--w:520px"><span class="sr-only">Mac storage questions, answered</span><span aria-hidden="true" class="px glow-amber" data-px="QUESTIONS, ANSWERED." data-color="amber" data-ab></span></h2>
+      <p class="reveal d2">What people search for when their Mac says the disk is almost full.</p>
+    </div>
+    <div class="faq">
+      <details class="reveal" open>
+        <summary>What is taking up space on my Mac?</summary>
+        <p>Usually things you never see: app caches in <code>~/Library/Caches</code>, Xcode build data and simulators, <code>node_modules</code> folders, Docker and virtual machine disks, local AI models, old iPhone backups and duplicate downloads. Roomy scans your home folder in seconds and lists the biggest ones first, with an explanation for each.</p>
+      </details>
+      <details class="reveal">
+        <summary>Is it safe to delete <code>~/Library/Caches</code> on a Mac?</summary>
+        <p>The contents, yes: apps rebuild their caches as needed, though some may be slower the first time. The folder itself should stay, so Roomy keeps the folder and moves what's inside to the Trash. Quit apps first to clear more.</p>
+      </details>
+      <details class="reveal">
+        <summary>How do I free up space from Xcode?</summary>
+        <p><code>DerivedData</code> and <code>iOS DeviceSupport</code> are safe to delete: Xcode rebuilds or re-copies them. Simulator devices and archives are worth a look first. Running <code>xcrun simctl delete unavailable</code> removes simulators for iOS versions you no longer have.</p>
+      </details>
+      <details class="reveal">
+        <summary>Can I delete <code>node_modules</code>, Docker images or Ollama models?</summary>
+        <p><code>node_modules</code> comes back with <code>npm install</code>. For Docker, don't delete its disk file; run <code>docker system prune -a</code> instead. For Ollama, <code>ollama rm</code> removes one model at a time. Roomy shows the right command for each.</p>
+      </details>
+      <details class="reveal">
+        <summary>How is Roomy different from DaisyDisk, GrandPerspective or CleanMyMac?</summary>
+        <p>Disk maps show you what's big. Roomy also tells you what each folder is, what happens if you delete it, and whether it comes back on its own. It's free, open source, runs offline, and only removes things when you click.</p>
+      </details>
+      <details class="reveal">
+        <summary>Does Roomy upload my files?</summary>
+        <p>No. Roomy has no network code at all. It reads file names and sizes on your Mac and nothing leaves it.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section class="section download" id="download">
+    <div class="panel reveal">
+      <div class="panel-head"><span class="lights"><i></i><i></i><i></i></span><span style="--h:13px" class="px h glow-amber" data-px="GET ROOMY" data-color="amber"></span><span class="ticks"></span></div>
+      <div class="dl-body">
+        <span class="sprite" data-sprite="mascot"></span>
+        <span class="px glow-amber" data-px="FREE YOUR SPACE." data-color="amber" data-ab></span>
+        <div class="cta" style="justify-content:center">
+          <a class="btn primary big" href="https://github.com/TusharKarkera22/Roomy/releases/latest/download/Roomy-0.1.0.dmg" data-download>↓ Download Roomy for Mac</a>
+          <a class="btn big" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">Open on GitHub</a>
+        </div>
+        <p class="meta">v0.1.0 · .dmg · 2 MB · macOS 14 or later · Apple Silicon &amp; Intel</p>
+        <div class="steps">
+          <div class="step"><b>1</b>Open the DMG and drag <em>Roomy</em> onto <em>Applications</em>.</div>
+          <div class="step"><b>2</b>Open Roomy. Roomy isn't notarized by Apple yet, so macOS can't check it: click <em>Done</em>.</div>
+          <div class="step"><b>3</b>In <em>System Settings › Privacy &amp; Security</em>, click <em>Open Anyway</em>. Only once.</div>
+        </div>
+        <div class="source">
+          <p class="meta" style="text-align:left;margin:6px 0 8px">Prefer to build it yourself? It's the same code:</p>
+          <div class="source-line">
+            <code id="cmd">git clone https://github.com/TusharKarkera22/Roomy.git &amp;&amp; cd Roomy &amp;&amp; scripts/build-app.sh</code>
+            <button class="btn small" id="copyBtn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a class="brand" href="#top"><span class="sprite" data-sprite="mascot" style="width:22px"></span><span class="px" data-px="ROOMY" data-color="amber"></span></a>
+  <span>Free &amp; open source under the MIT license. Made by Tushar Karkera.</span>
+  <nav>
+    <a href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/TusharKarkera22/Roomy/releases" target="_blank" rel="noopener">Releases</a>
+    <a href="https://github.com/TusharKarkera22/Roomy/issues" target="_blank" rel="noopener">Report a folder</a>
+  </nav>
+</footer>
+<div class="scanlines"></div>
+
+<script type="module">
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COLORS = { amber: '#FFB238', phosphor: '#F6E7C8', green: '#8CFF6A', red: '#FF3D2E', magenta: '#FF4FD8',
+  blue: '#8FB4FF', dim: '#A38F78', orange: '#FF6A1F', plastic: '#5C220A', screen: '#120D0B' };
+
+// ---------- Roomy's dot-matrix font, the same 5×7 glyphs as the app's PixelFont.swift ----------
+const FONT_SOURCE = `A .###. #...# #...# ##### #...# #...# #...#
+B ####. #...# #...# ####. #...# #...# ####.
+C .###. #...# #.... #.... #.... #...# .###.
+D ####. #...# #...# #...# #...# #...# ####.
+E ##### #.... #.... ####. #.... #.... #####
+F ##### #.... #.... ####. #.... #.... #....
+G .###. #...# #.... #.### #...# #...# .####
+H #...# #...# #...# ##### #...# #...# #...#
+I ##### ..#.. ..#.. ..#.. ..#.. ..#.. #####
+J ..### ...#. ...#. ...#. #..#. #..#. .##..
+K #...# #..#. #.#.. ##... #.#.. #..#. #...#
+L #.... #.... #.... #.... #.... #.... #####
+M #...# ##.## #.#.# #.#.# #...# #...# #...#
+N #...# ##..# #.#.# #..## #...# #...# #...#
+O .###. #...# #...# #...# #...# #...# .###.
+P ####. #...# #...# ####. #.... #.... #....
+Q .###. #...# #...# #...# #.#.# #..#. .##.#
+R ####. #...# #...# ####. #.#.. #..#. #...#
+S .#### #.... #.... .###. ....# ....# ####.
+T ##### ..#.. ..#.. ..#.. ..#.. ..#.. ..#..
+U #...# #...# #...# #...# #...# #...# .###.
+V #...# #...# #...# #...# #...# .#.#. ..#..
+W #...# #...# #...# #.#.# #.#.# #.#.# .#.#.
+X #...# #...# .#.#. ..#.. .#.#. #...# #...#
+Y #...# #...# .#.#. ..#.. ..#.. ..#.. ..#..
+Z ##### ....# ...#. ..#.. .#... #.... #####
+0 .###. #...# #..## #.#.# ##..# #...# .###.
+1 ..#.. .##.. ..#.. ..#.. ..#.. ..#.. .###.
+2 .###. #...# ....# ...#. ..#.. .#... #####
+3 ####. ....# ....# .###. ....# ....# ####.
+4 ...#. ..##. .#.#. #..#. ##### ...#. ...#.
+5 ##### #.... ####. ....# ....# #...# .###.
+6 .###. #.... #.... ####. #...# #...# .###.
+7 ##### ....# ...#. ..#.. .#... .#... .#...
+8 .###. #...# #...# .###. #...# #...# .###.
+9 .###. #...# #...# .#### ....# ....# .###.
+. ..... ..... ..... ..... ..... .##.. .##..
+, ..... ..... ..... ..... .##.. ..#.. .#...
+: ..... .##.. .##.. ..... .##.. .##.. .....
+! ..#.. ..#.. ..#.. ..#.. ..#.. ..... ..#..
+? .###. #...# ....# ...#. ..#.. ..... ..#..
+- ..... ..... ..... ##### ..... ..... .....
+/ ....# ....# ...#. ..#.. .#... #.... #....
+% ##..# ##..# ...#. ..#.. .#... #..## #..##
+~ ..... ..... .#... #.#.# ...#. ..... .....
+' ..#.. ..#.. .#... ..... ..... ..... .....`;
+const GLYPHS = Object.fromEntries(FONT_SOURCE.split('\n').map(line => {
+  const [char, ...rows] = line.split(' ');
+  return [char, rows];
+}));
+
+function pixelSVG(text, { color = 'phosphor', aberration = false } = {}) {
+  const chars = [...text.toUpperCase()];
+  const width = Math.max(chars.length * 6 - 1, 0) + 1.2;
+  const layer = (fill, shift) => {
+    let rects = '';
+    chars.forEach((char, index) => {
+      const glyph = GLYPHS[char];
+      if (!glyph) return;
+      glyph.forEach((row, y) => [...row].forEach((dot, x) => {
+        if (dot === '#') rects += `<rect x="${(0.6 + shift + index * 6 + x + 0.08).toFixed(2)}" y="${y + 0.08}" width=".84" height=".84" rx=".22"/>`;
+      }));
+    });
+    return `<g fill="${fill}">${rects}</g>`;
+  };
+  const main = COLORS[color] ?? color;
+  const fringe = aberration ? layer('rgba(255,61,46,.8)', -0.6) + layer('rgba(143,180,255,.8)', 0.6) : '';
+  return `<svg viewBox="0 0 ${width} 7" width="${width * 10}" height="70" role="img" aria-label="${text}">${fringe}${layer(main, 0)}</svg>`;
+}
+
+function renderPixels(root = document) {
+  $$('[data-px]', root).forEach(el => {
+    el.innerHTML = pixelSVG(el.dataset.px, { color: el.dataset.color, aberration: 'ab' in el.dataset });
+  });
+}
+
+// ---------- Roomy's pixel sprites, from the app's Sprites.swift ----------
+const PALETTE = { K: '#000', W: '#fff', B: '#D9A066', b: '#A8703A', Y: '#F4E3B5', R: '#FF8FA3', C: '#A8E6F5',
+  F: '#F7D774', L: '#BDBDBD', D: '#7A7A7A', H: '#F6E7C8' };
+const SPRITES = {
+  mascot: `................ .KKKKKKKKKKKKKK. .KBBBBBYYBBBBBK. .KBBBBBYYBBBBBK. .KKKKKKKKKKKKKK. .KBBBBBBBBBBBBK. .KBBKKBBBBKKBBK. .KBBKKBBBBKKBBK. .KBBBBBBBBBBBBK. .KBRRBBBBBBRRBK. .KBBBKBBBBKBBBK. .KBBBBKKKKBBBBK. .KBBBBBBBBBBBBK. .KbbbbbbbbbbbbK. .KKKKKKKKKKKKKK. ..KK........KK..`,
+  folder: `.KKKK......... KFFFFK........ KFFFFFKKKKKKK. KFFFFFFFFFFFFK KKKKKKKKKKKKKK KFFFFFFFFFFFFK KFFFFFFFFFFFFK KFFFFFFFFFFFFK KFFFFFFFFFFFFK KFFFFFFFFFFFFK KKKKKKKKKKKKKK`,
+  file: `KKKKKKK... KWWWWWKK.. KWWWWWKWK. KWWWWWKKKK KWWWWWWWWK KWLLLLLLWK KWWWWWWWWK KWLLLLLLWK KWWWWWWWWK KWLLLLLWWK KWWWWWWWWK KKKKKKKKKK`,
+  trash: `....KKK.... KKKKKKKKKKK KWWWWWWWWWK KKKKKKKKKKK .KWKWKWKWK. .KWKWKWKWK. .KWKWKWKWK. .KWKWKWKWK. .KWKWKWKWK. .KWKWKWKWK. .KWWWWWWWK. .KKKKKKKKK.`,
+  magnifier: `..HHHH.... .HCCCCH... HCWCCCCH.. HCWCCCCH.. HCCCCCCH.. HCCCCCCH.. .HCCCCHH.. ..HHHHHHH. .......HHH ........HH`,
+  lock: `..HHHHH.. .HH...HH. .H.....H. KKKKKKKKK KFFFFFFFK KFFFKFFFK KFFFKFFFK KFFFFFFFK KKKKKKKKK`,
+  house: `....H.... ...HWH... ..HWWWH.. .HWWWWWH. HHWWWWWHH .HWWHWWH. .HWWHWWH. .HHHHHHH.`,
+  check: `......W .....WW W...WW. WW.WW.. .WWW... ..W....`,
+  bang: `..WWW.. ..WWW.. ..WWW.. ...W... ....... ...W...`,
+  shut: `.WWWWW. WW...WW WWWWWWW WWW.WWW WWW.WWW WWWWWWW`,
+  question: `.WWWW.. W...WW. ...WW.. ..WW... ....... ..WW...`,
+};
+
+function spriteSVG(name, ink) {
+  const rows = SPRITES[name].split(' ');
+  const width = rows[0].length;
+  let rects = '';
+  rows.forEach((row, y) => [...row].forEach((key, x) => {
+    if (key === '.') return;
+    const fill = ink ? (COLORS[ink] ?? ink) : PALETTE[key];
+    rects += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${fill}"/>`;
+  }));
+  return `<svg viewBox="0 0 ${width} ${rows.length}" width="${width * 4}" height="${rows.length * 4}" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`;
+}
+
+function renderSprites(root = document) {
+  $$('[data-sprite]', root).forEach(el => { el.innerHTML = spriteSVG(el.dataset.sprite, el.dataset.ink); });
+}
+
+renderPixels();
+renderSprites();
+
+// ---------- Scroll: nav, progress, reveals ----------
+const nav = $('#nav');
+const progressBar = $('#progress');
+const onScroll = () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progressBar.style.width = `${(scrollY / Math.max(max, 1)) * 100}%`;
+  nav.classList.toggle('solid', scrollY > 40);
+};
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const revealer = new IntersectionObserver(entries => entries.forEach(entry => {
+  if (entry.isIntersecting) { entry.target.classList.add('in'); revealer.unobserve(entry.target); }
+}), { threshold: 0.15 });
+$$('.reveal').forEach(el => revealer.observe(el));
+
+function whenVisible(el, run) {
+  const watcher = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) { watcher.disconnect(); run(); }
+  }, { threshold: 0.35 });
+  watcher.observe(el);
+}
+
+// ---------- Hero: TV tilt and sound ----------
+const tv = $('#tv');
+if (!reduceMotion) {
+  $('.hero').addEventListener('pointermove', event => {
+    const box = tv.getBoundingClientRect();
+    const x = (event.clientX - (box.left + box.width / 2)) / innerWidth;
+    const y = (event.clientY - (box.top + box.height / 2)) / innerHeight;
+    tv.style.setProperty('--ry', `${-6 + x * 10}deg`);
+    tv.style.setProperty('--rx', `${-y * 6}deg`);
+  });
+}
+const film = $('#film');
+const soundButton = $('#sound');
+soundButton.addEventListener('click', () => {
+  film.muted = !film.muted;
+  if (!film.muted) { film.currentTime = 0; film.play(); }
+  soundButton.textContent = film.muted ? '🔈 Sound on' : '🔇 Sound off';
+  soundButton.setAttribute('aria-pressed', String(!film.muted));
+});
+if (reduceMotion) film.removeAttribute('autoplay'), film.pause();
+
+// ---------- Formatting like the app (ByteCountFormatter, decimal) ----------
+function bytes(count) {
+  if (count < 1e3) return 'Zero KB';
+  if (count < 1e6) return `${Math.round(count / 1e3)} KB`;
+  if (count < 1e9) return `${(count / 1e6).toFixed(1)} MB`;
+  return `${(count / 1e9).toFixed(2)} GB`;
+}
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+
+function animate(duration, step) {
+  if (reduceMotion) return step(1);
+  const start = performance.now();
+  const frame = now => {
+    const k = Math.min((now - start) / duration, 1);
+    step(easeOut(k));
+    if (k < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+
+// ---------- Ch.01: the disk fills to 85% ----------
+const leds = $('#leds');
+leds.innerHTML = '<i></i>'.repeat(50);
+whenVisible($('#full'), () => {
+  const cells = $$('i', leds);
+  cells.slice(0, 43).forEach((cell, index) => setTimeout(() => cell.classList.add('on'), reduceMotion ? 0 : index * 28));
+});
+
+// ---------- Ch.02: radar and counters ----------
+const chaser = $('#chaser');
+chaser.innerHTML = Array.from({ length: 36 }, (_, i) => `<i style="animation-delay:${(i * 0.05).toFixed(2)}s"></i>`).join('');
+
+function stripedCircle(ctx, x, y, r, colors, stripe) {
+  const gradient = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
+  colors.forEach((color, i) => gradient.addColorStop(i / (colors.length - 1), color));
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = gradient; ctx.fill(); ctx.clip();
+  ctx.fillStyle = 'rgba(18,13,11,.9)';
+  for (let row = y - r; row < y + r; row += stripe) ctx.fillRect(x - r, row + stripe * 0.62, r * 2, stripe * 0.38);
+  ctx.restore();
+}
+
+// The app's scanning radar (ScanViews.swift), drawn the same way.
+function drawRadar(ctx, size, time) {
+  const c = size / 2, outer = c - 24, orbits = [outer, outer * 0.78, outer * 0.58];
+  ctx.clearRect(0, 0, size, size);
+  ctx.setLineDash([4, 10]); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(246,231,200,.3)';
+  orbits.forEach(r => { ctx.beginPath(); ctx.arc(c, c, r, 0, Math.PI * 2); ctx.stroke(); });
+  ctx.setLineDash([]);
+  const sweep = time * 1.3;
+  for (let step = 0; step < 28; step++) {
+    ctx.beginPath(); ctx.moveTo(c, c);
+    ctx.arc(c, c, outer, sweep - (step + 1) * 0.035, sweep - step * 0.035);
+    ctx.closePath(); ctx.fillStyle = `rgba(255,178,56,${0.22 * (1 - step / 28)})`; ctx.fill();
+  }
+  [[.85, .6], [.68, 2.3], [.95, 3.9], [.5, 5.2], [.74, 4.6]].forEach(([distance, angle]) => {
+    let behind = (sweep - angle) % (Math.PI * 2); if (behind < 0) behind += Math.PI * 2;
+    ctx.fillStyle = `rgba(140,255,106,${Math.max(.1, 1 - behind / 2.5)})`;
+    ctx.fillRect(c + Math.cos(angle) * outer * distance - 6, c + Math.sin(angle) * outer * distance - 6, 12, 12);
+  });
+  stripedCircle(ctx, c, c, outer * 0.36, [COLORS.blue, COLORS.phosphor, COLORS.amber], 8);
+  [[orbits[0], .35, 0, 26, [COLORS.amber, COLORS.orange, COLORS.red]], [orbits[0], .35, 2.6, 12, [COLORS.phosphor, COLORS.amber]],
+   [orbits[1], -.6, 1, 18, [COLORS.red, COLORS.magenta]], [orbits[2], .95, 4, 12, [COLORS.phosphor, COLORS.blue]]]
+    .forEach(([orbit, speed, phase, radius, colors]) => {
+      const angle = time * speed + phase;
+      stripedCircle(ctx, c + Math.cos(angle) * orbit, c + Math.sin(angle) * orbit, radius, colors, 6);
+    });
+}
+
+const radar = $('#radar');
+const radarContext = radar.getContext('2d');
+let radarVisible = false;
+new IntersectionObserver(([entry]) => { radarVisible = entry.isIntersecting; }).observe(radar);
+const radarLoop = now => {
+  if (radarVisible) drawRadar(radarContext, radar.width, now / 1000);
+  if (!reduceMotion) requestAnimationFrame(radarLoop);
+};
+drawRadar(radarContext, radar.width, 0.6);
+if (!reduceMotion) requestAnimationFrame(radarLoop);
+
+const PATHS = ['~/Library/Caches/Google/Chrome/Profile 5/Code Cache', '~/Library/Developer/CoreSimulator/Devices',
+  '~/Library/Developer/Xcode/iOS DeviceSupport', '~/Library/Android/sdk/system-images',
+  '~/Library/Application Support/Claude/Cache', '~/Library/Developer/Xcode/Archives'];
+const setPx = (el, text, color) => { el.innerHTML = pixelSVG(text, { color }); };
+setPx($('#cFiles'), '0', 'phosphor'); setPx($('#cBytes'), 'ZERO KB', 'phosphor'); setPx($('#cTime'), '0 S', 'green');
+whenVisible($('#scanPanel'), () => {
+  animate(2600, k => {
+    setPx($('#cFiles'), Math.round(606727 * k).toLocaleString('en-US'), 'phosphor');
+    setPx($('#cBytes'), bytes(96.13e9 * k), 'phosphor');
+    setPx($('#cTime'), k < 1 ? `${Math.round(17 * k)} S` : '17 SECONDS', 'green');
+    $('#term').textContent = k < 1 ? `> ${PATHS[Math.floor(k * 18) % PATHS.length]}` : '> done. 96.13 GB measured. nothing left this Mac.';
+  });
+});
+
+// ---------- Ch.03: the explorer, with the app's real rules ----------
+const RULES = {
+  'simulator-devices': { title: 'Simulator devices', owner: 'Xcode Simulator', what: 'Your simulated iPhones and iPads, with the apps and data installed on them.', ifDeleted: 'Those simulators and their app data are gone. Xcode can create fresh ones.', verdict: 'review', comesBack: false, howToClean: 'Run `xcrun simctl delete unavailable` to remove simulators for OS versions you no longer have, or use Xcode › Window › Devices and Simulators.' },
+  'caches': { title: 'App caches', owner: 'The app named in the path', what: 'Temporary files apps keep to work faster.', ifDeleted: 'Apps rebuild what they need. Some may be slower the first time.', verdict: 'safe', comesBack: true, howToClean: 'Quit the app first.' },
+  'xcode-device-support': { title: 'Device debug symbols', owner: 'Xcode', what: "Debug symbols Xcode copies from each iPhone, iPad or Watch OS version you've connected.", ifDeleted: 'Xcode copies them again the next time you connect a device with that OS version.', verdict: 'safe', comesBack: true },
+  'android-sdk': { title: 'Android SDK', owner: 'Android Studio', what: 'Android build tools and platform files.', ifDeleted: "Android projects won't build until Android Studio downloads it again.", verdict: 'review', comesBack: false, howToClean: 'Remove old platforms and build tools in Android Studio › SDK Manager.' },
+  'xcode-archives': { title: 'Xcode archives', owner: 'Xcode', what: 'Builds you archived for the App Store or for sharing, with their debug symbols.', ifDeleted: "You can't re-export those builds or read crash reports from them. Keep archives of versions people still use.", verdict: 'review', comesBack: false, howToClean: 'Xcode › Window › Organizer › Archives, delete old ones there.' },
+  'electron-cache': { title: 'App cache', owner: 'The app named in the path (Chrome, Slack, Discord, VS Code, Claude and other web-based apps)', what: 'Images, scripts and compiled code the app keeps so it starts and loads faster.', ifDeleted: 'The app rebuilds it as you use it. Sign-ins and settings are kept.', verdict: 'safe', comesBack: true, howToClean: 'Quit the app first. Many apps also have a Clear Cache option in their settings.' },
+};
+const WINS = [
+  { name: 'Devices', path: '~/Library/Developer/CoreSimulator/Devices', size: 12.31e9, rule: 'simulator-devices' },
+  { name: 'Caches', path: '~/Library/Caches', size: 12.23e9, rule: 'caches' },
+  { name: 'iOS DeviceSupport', path: '~/Library/Developer/Xcode/iOS DeviceSupport', size: 11.71e9, rule: 'xcode-device-support' },
+  { name: 'sdk', path: '~/Library/Android/sdk', size: 7.57e9, rule: 'android-sdk' },
+  { name: 'Archives', path: '~/Library/Developer/Xcode/Archives', size: 2.41e9, rule: 'xcode-archives' },
+  { name: 'Cache', path: '~/Library/Application Support/Claude/Cache', size: 876.2e6, rule: 'electron-cache' },
+];
+const VERDICT = { safe: ['check', 'green', 'SAFE'], review: ['bang', 'amber', 'REVIEW'], keep: ['shut', 'red', 'KEEP'] };
+const tag = verdict => {
+  const [glyph, ink, label] = VERDICT[verdict];
+  return `<span class="tag ${verdict}"><span class="sprite">${spriteSVG(glyph, ink)}</span>${label}</span>`;
+};
+const escape = text => text.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const withCode = text => escape(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+const rows = $('#rows');
+rows.innerHTML = WINS.map((win, index) => {
+  const rule = RULES[win.rule];
+  return `<button class="row" role="option" data-index="${index}" aria-selected="false"
+    aria-label="${win.name}, ${rule.title}, ${VERDICT[rule.verdict][2].toLowerCase()}, ${bytes(win.size)}">
+    <span class="sel"></span><span class="sprite">${spriteSVG('folder')}</span>
+    <span><span class="name">${win.name}<small>${rule.title}</small></span>
+      <span class="bar" style="--c:var(--${VERDICT[rule.verdict][1]})"><i data-w="${(win.size / WINS[0].size * 100).toFixed(1)}%"></i></span></span>
+    ${tag(rule.verdict)}<span class="size">${bytes(win.size)}</span></button>`;
+}).join('');
+
+function select(index) {
+  $$('.row', rows).forEach((row, i) => { row.classList.toggle('active', i === index); row.setAttribute('aria-selected', String(i === index)); });
+  const win = WINS[index], rule = RULES[win.rule];
+  $('#info').innerHTML = `
+    <div class="info-head"><span class="sprite">${spriteSVG('folder')}</span>
+      <div><b>${win.name}</b><span style="--h:18px" class="px h glow-amber">${pixelSVG(bytes(win.size), { color: 'amber' })}</span></div></div>
+    ${tag(rule.verdict)}
+    <div class="path">${win.path}</div>
+    <h3>${rule.title}</h3>
+    <div class="field"><small>What it is</small><div>${withCode(rule.what)}</div></div>
+    <div class="field"><small>Belongs to</small><div>${withCode(rule.owner)}</div></div>
+    <div class="field"><small>If you delete it</small><div>${withCode(rule.ifDeleted)}</div></div>
+    <div class="field"><small>Comes back on its own</small><div>${rule.comesBack ? 'Yes' : 'No'}</div></div>
+    ${rule.howToClean ? `<div class="field"><small>Better way to clean it</small><div>${withCode(rule.howToClean)}</div></div>` : ''}`;
+}
+rows.addEventListener('click', event => {
+  const row = event.target.closest('.row');
+  if (row) select(Number(row.dataset.index));
+});
+select(1);
+whenVisible(rows, () => $$('.bar i', rows).forEach((bar, i) => setTimeout(() => { bar.style.width = bar.dataset.w; }, reduceMotion ? 0 : i * 110)));
+
+// ---------- Ch.04: one-click clean ----------
+const modal = $('#modal'), toast = $('#toast'), trashButton = $('#trashBtn');
+let cleaned = false;
+function showToast(text) {
+  $('#toastText').textContent = text;
+  toast.classList.add('show');
+}
+trashButton.addEventListener('click', () => {
+  if (cleaned) {
+    cleaned = false;
+    $('#cleanSize').textContent = '12.23 GB';
+    $('#cleanBar').style.width = '99%';
+    trashButton.textContent = 'Trash contents…';
+    toast.classList.remove('show');
+    return;
+  }
+  modal.classList.add('show');
+  $('#confirmBtn').focus();
+});
+$('#cancelBtn').addEventListener('click', () => { modal.classList.remove('show'); trashButton.focus(); });
+$('#confirmBtn').addEventListener('click', () => {
+  modal.classList.remove('show');
+  cleaned = true;
+  animate(700, k => {
+    $('#cleanSize').textContent = bytes(12.23e9 * (1 - k));
+    $('#cleanBar').style.width = `${99 * (1 - k)}%`;
+  });
+  showToast('Moved 76 items from “Caches” to the Trash (12.23 GB).');
+  trashButton.textContent = 'Run it again';
+});
+$('#revealBtn').addEventListener('click', () => showToast('In the app, this opens the folder in Finder.'));
+addEventListener('keydown', event => { if (event.key === 'Escape') modal.classList.remove('show'); });
+
+// ---------- Download + GitHub ----------
+$('#copyBtn').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('#cmd').textContent); $('#copyBtn').textContent = 'Copied'; }
+  catch { $('#copyBtn').textContent = 'Select it'; }
+  setTimeout(() => { $('#copyBtn').textContent = 'Copy'; }, 1800);
+});
+fetch('https://api.github.com/repos/TusharKarkera22/Roomy')
+  .then(response => response.ok ? response.json() : null)
+  .then(repo => {
+    if (repo && repo.stargazers_count > 0) $$('[data-stars]').forEach(el => { el.textContent = repo.stargazers_count.toLocaleString('en-US'); });
+  })
+  .catch(() => {});
+
+// ---------- The space scene: your disk as a striped planet over a synthwave grid ----------
+async function space() {
+  const THREE = await import('three');
+  const canvas = $('#space');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x120d0b, 50, 170);
+  const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 600);
+
+  // Full brightness in the hero; dimmed behind the story so the text stays readable.
+  const dim = { value: 1 };
+  const stripes = (a, b, c, count) => new THREE.ShaderMaterial({
+    uniforms: { uA: { value: new THREE.Color(a) }, uB: { value: new THREE.Color(b) }, uC: { value: new THREE.Color(c) },
+      uBg: { value: new THREE.Color(0x120d0b) }, uCount: { value: count }, uTime: { value: 0 }, uDim: dim },
+    vertexShader: `varying vec3 vN; varying vec3 vP; varying vec3 vV;
+      void main() { vP = normalize(position); vN = normalize(normalMatrix * normal);
+        vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform vec3 uA, uB, uC, uBg; uniform float uCount, uTime, uDim; varying vec3 vN; varying vec3 vP; varying vec3 vV;
+      void main() {
+        float t = clamp(0.5 - 0.5 * (vP.y * 0.85 - vP.x * 0.3), 0.0, 1.0);
+        vec3 col = t < 0.5 ? mix(uA, uB, t * 2.0) : mix(uB, uC, (t - 0.5) * 2.0);
+        float band = fract((vP.y * 0.5 + 0.5) * uCount - uTime * 0.04);
+        col = mix(col, uBg, step(0.62, band) * 0.92);
+        float light = 0.45 + 0.55 * max(dot(vN, normalize(vec3(-0.5, 0.6, 0.8))), 0.0);
+        float rim = pow(1.0 - max(dot(vN, vV), 0.0), 2.4);
+        gl_FragColor = vec4(mix(uBg, col * light + uC * rim * 0.55, uDim), 1.0);
+      }`,
+  });
+
+  const system = new THREE.Group();
+  scene.add(system);
+  const planet = new THREE.Mesh(new THREE.SphereGeometry(9, 96, 96), stripes(0x8fb4ff, 0xf6e7c8, 0xffb238, 22));
+  system.add(planet);
+
+  const glowCanvas = document.createElement('canvas');
+  glowCanvas.width = glowCanvas.height = 128;
+  const g = glowCanvas.getContext('2d');
+  const radial = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  radial.addColorStop(0, 'rgba(255,178,56,.55)'); radial.addColorStop(1, 'rgba(255,178,56,0)');
+  g.fillStyle = radial; g.fillRect(0, 0, 128, 128);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 }));
+  glow.scale.set(42, 42, 1);
+  system.add(glow);
+
+  const rings = new THREE.Group();
+  rings.rotation.set(1.18, 0, 0.28);
+  system.add(rings);
+  const moons = [];
+  [[15, 0.32, [0xffb238, 0xff6a1f, 0xff3d2e], 1.3], [19.5, -0.22, [0xff3d2e, 0xff4fd8, 0xff4fd8], 0.95], [24.5, 0.16, [0xf6e7c8, 0x8fb4ff, 0x8fb4ff], 0.75]]
+    .forEach(([radius, speed, colors, size], index) => {
+      const points = new THREE.EllipseCurve(0, 0, radius, radius).getPoints(180).map(p => new THREE.Vector3(p.x, p.y, 0));
+      const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineDashedMaterial({ color: 0xf6e7c8, dashSize: 0.55, gapSize: 1.3, transparent: true, opacity: 0.38 }));
+      ring.computeLineDistances();
+      rings.add(ring);
+      const moon = new THREE.Mesh(new THREE.SphereGeometry(size, 40, 40), stripes(...colors, 8));
+      rings.add(moon);
+      moons.push({ moon, radius, speed, phase: index * 2.1 });
+    });
+
+  const starCount = 1400;
+  const starPositions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    const r = 120 + Math.random() * 180, theta = Math.random() * Math.PI * 2, phi = Math.acos(Math.random() * 1.6 - 0.6);
+    starPositions.set([r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi) * 0.6 + 20, -Math.abs(r * Math.sin(phi) * Math.sin(theta))], i * 3);
+  }
+  const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(starPositions, 3)),
+    new THREE.PointsMaterial({ color: 0xf6e7c8, size: 1.1, transparent: true, opacity: 0.75, fog: false }));
+  scene.add(stars);
+
+  const grid = new THREE.GridHelper(600, 150, 0xff4fd8, 0xff4fd8);
+  grid.material.transparent = true;
+  grid.material.opacity = 0.2;
+  grid.position.y = -16;
+  scene.add(grid);
+
+  let width = 0, height = 0, mouseX = 0, mouseY = 0, cameraX = 0, cameraY = 4;
+  const resize = () => {
+    width = innerWidth; height = innerHeight;
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  };
+  resize();
+  addEventListener('resize', resize);
+  addEventListener('pointermove', event => { mouseX = event.clientX / innerWidth - 0.5; mouseY = event.clientY / innerHeight - 0.5; }, { passive: true });
+
+  const clock = new THREE.Clock();
+  const render = () => {
+    const time = clock.getElapsedTime();
+    const scroll = scrollY / Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+    const narrow = width < 960;
+    // The planet drifts across the story: right in the hero, left mid-way, centred by the download.
+    system.position.set((narrow ? 7 : 17) * Math.cos(scroll * Math.PI * 1.15), (narrow ? 9 : 3) - scroll * 6, narrow ? -18 : -6);
+    system.scale.setScalar(narrow ? 0.7 : 1);
+    // On phones the planet sits behind the headline, so it starts dimmed there.
+    const pastHero = narrow ? 0.7 : Math.min(Math.max((scrollY - innerHeight * 0.3) / (innerHeight * 0.6), 0), 1);
+    dim.value = 1 - 0.78 * pastHero;
+    glow.material.opacity = 0.55 * (1 - 0.8 * pastHero);
+    planet.rotation.y = time * 0.08;
+    planet.material.uniforms.uTime.value = time;
+    moons.forEach(({ moon, radius, speed, phase }) => {
+      const angle = time * speed + phase;
+      moon.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+      moon.rotation.y = time * 0.4;
+    });
+    grid.position.z = (time * 5) % 4;
+    stars.rotation.y = time * 0.004;
+    cameraX += (mouseX * 4 - cameraX) * 0.04;
+    cameraY += ((4 - scroll * 5) - mouseY * 2 - cameraY) * 0.04;
+    camera.position.set(cameraX, cameraY, 44);
+    camera.lookAt(0, cameraY - 4, 0);
+    renderer.render(scene, camera);
+  };
+
+  if (reduceMotion) {
+    render();
+    addEventListener('scroll', render, { passive: true });
+    addEventListener('resize', render);
+    return;
+  }
+  renderer.setAnimationLoop(() => { if (!document.hidden) render(); });
+}
+space().catch(() => { $('#space').remove(); });
+</script>
+</body>
+</html>
