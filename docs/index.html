@@ -199,6 +199,9 @@ main, footer { position: relative; z-index: 2; }
 .lead strong { color: var(--phosphor); font-weight: 500; }
 .cta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .meta { margin-top: 16px; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
+.ph-badge { display: inline-block; margin-top: 18px; border-radius: 10px; transition: transform .2s, box-shadow .2s; }
+.ph-badge:hover { transform: translateY(-2px); box-shadow: 0 0 22px rgba(255,97,84,.35); }
+.ph-badge img { display: block; width: 250px; height: 54px; }
 
 /* The TV */
 .tv { position: relative; border-radius: 36px; padding: 22px 22px 0; background: var(--bezel);
@@ -452,6 +455,7 @@ footer a { text-decoration: none; } footer a:hover { color: var(--amber); }
         <a class="btn big" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">★ Star on GitHub <span class="count" data-stars></span></a>
       </div>
       <p class="meta reveal d3">v0.1.0 · macOS 14 or later · Apple Silicon &amp; Intel · 2 MB</p>
+      <a class="ph-badge reveal d3" href="https://www.producthunt.com/products/roomy-4?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-roomy-4" target="_blank" rel="noopener noreferrer"><img alt="Roomy - a fast Mac disk space analyzer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1301776&amp;theme=dark&amp;t=1793631312395"></a>
     </div>
 
     <div class="tv reveal d2" id="tv">
@@ -675,6 +679,7 @@ footer a { text-decoration: none; } footer a:hover { color: var(--amber); }
           <a class="btn big" href="https://github.com/TusharKarkera22/Roomy" target="_blank" rel="noopener">Open on GitHub</a>
         </div>
         <p class="meta">v0.1.0 · .dmg · 2 MB · macOS 14 or later · Apple Silicon &amp; Intel</p>
+        <a class="ph-badge" href="https://www.producthunt.com/products/roomy-4?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-roomy-4" target="_blank" rel="noopener noreferrer"><img alt="Roomy - a fast Mac disk space analyzer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1301776&amp;theme=dark&amp;t=1793631312395" loading="lazy"></a>
         <div class="steps">
           <div class="step"><b>1</b>Open the DMG and drag <em>Roomy</em> onto <em>Applications</em>.</div>
           <div class="step"><b>2</b>Open Roomy. Roomy isn't notarized by Apple yet, so macOS can't check it: click <em>Done</em>.</div>
