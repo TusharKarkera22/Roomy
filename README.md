@@ -4,9 +4,9 @@
 
 A free, open-source Mac app that shows where your disk space went, explains what each big folder is, and tells you whether it's safe to delete. Styled like a retro CRT space console, with pixel art.
 
-[![Watch the 22-second launch video](assets/launch-poster.jpg)](https://github.com/TusharKarkera22/Roomy/releases/download/v0.1.0/roomy-launch.mp4)
+[![Roomy scanning ~/Library, explaining each folder, and clearing a Safe cache](assets/demo.gif)](https://github.com/TusharKarkera22/Roomy/releases/download/v0.1.0/roomy-launch.mp4)
 
-*Click to watch the 22-second launch video.*
+*Click for the full launch video with sound.*
 
 Most disk tools show sizes. Roomy also answers the next question: *what is this, and what happens if I delete it?*
 
@@ -19,7 +19,18 @@ Most disk tools show sizes. Roomy also answers the next question: *what is this,
 - **Find duplicates**: identical files of 1 MB or more, compared by their full contents.
 - **Trash first.** Roomy moves things to the Trash, never deletes them directly, and refuses to trash top-level folders like `~/Library` or `~/Documents`. For Safe folders macOS expects to exist (like `~/Library/Caches`) it trashes what's inside and keeps the folder. The only permanent action is **Empty Trash**, which asks Finder to do it after a clear warning.
 
-## Install
+## Download
+
+**[Download Roomy 0.1.0 (.dmg, 2 MB)](https://github.com/TusharKarkera22/Roomy/releases/latest/download/Roomy-0.1.0.dmg)** for macOS 14 or later, on Apple Silicon or Intel.
+
+Open the DMG and drag Roomy onto Applications. Roomy isn't notarized by Apple yet, so the first time:
+
+1. Open Roomy. macOS says it can't check it for malware: click **Done**.
+2. Open **System Settings › Privacy & Security**, scroll down, and click **Open Anyway** next to Roomy.
+
+You only do this once. If you'd rather not, build it yourself below; it's the same code.
+
+## Build from source
 
 Requires macOS 14 or later and Xcode (or the Swift toolchain).
 
@@ -28,6 +39,8 @@ git clone https://github.com/TusharKarkera22/Roomy.git && cd Roomy
 scripts/build-app.sh
 open build/Roomy.app
 ```
+
+`scripts/make-dmg.sh` builds the same DMG as the release.
 
 On first launch Roomy asks how you want to give access. For Full Disk Access it opens System Settings and shows Roomy in Finder: drag it into the list and switch it on. macOS only lists apps you add yourself, and treats every new self-built copy as a new app, so switch it on again after rebuilding.
 
@@ -73,7 +86,7 @@ Files under 1 MB are counted per folder rather than listed, which keeps a whole-
 
 - An AI explanation for folders that no rule covers yet.
 - Hard links and APFS clones are counted as duplicates even though they share space.
-- The app builds for this Mac's chip only and is ad-hoc signed, so other Macs will show a Gatekeeper warning.
+- Developer ID signing and Apple notarization, which would remove the "can't check for malware" step on first open.
 
 ## License
 

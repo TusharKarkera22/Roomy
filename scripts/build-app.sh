@@ -1,10 +1,11 @@
 #!/bin/bash
-# Builds build/Roomy.app (ad-hoc signed, for this Mac's architecture).
+# Builds build/Roomy.app: one universal binary for Apple Silicon and Intel Macs, ad-hoc signed.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-swift build -c release
-bin=$(swift build -c release --show-bin-path)
+arches=(--arch arm64 --arch x86_64)
+swift build -c release "${arches[@]}"
+bin=$(swift build -c release "${arches[@]}" --show-bin-path)
 app=build/Roomy.app
 
 rm -rf "$app"
