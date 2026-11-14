@@ -84,18 +84,43 @@ final class AppModel {
         progress.cancel()
         root = url
         if !fresh, let cached = cache[url] { return show(cached) }
+        // Scanning again replaces what was measured before, even if this scan is stopped early.
+        if fresh { cache[url] = nil }
 
         let progress = ScanProgress()
         self.progress = progress
         screen = .scanning
         let started = Date()
+        // A home folder scan also measures Applications at the same time, and stops with it.
+        let applications = URL(filePath: "/Applications")
+        let isHome = url.path == URL.homeDirectory.path
+        let appsProgress = ScanProgress()
+        async let apps = isHome ? Self.measure(applications, progress: appsProgress) : nil
         let tree = await DiskScanner.scan(url, progress: progress)
+        if progress.isCancelled { appsProgress.cancel() }
+        let appsResult = await apps
         // A newer scan replaced this one while it ran.
         guard progress === self.progress else { return }
 
+        if let appsResult, !appsResult.stoppedEarly { cache[applications] = appsResult }
         let result = ScanResult(tree: tree, files: progress.snapshot.files, seconds: Date().timeIntervalSince(started), stoppedEarly: progress.isCancelled)
         if !result.stoppedEarly { cache[url] = result }
         show(result)
+    }
+
+    /// Where the startup disk's space goes, once a home folder scan has finished. Reads `revision` so views redraw after cleaning.
+    var diskBreakdown: DiskBreakdown? {
+        _ = revision
+        guard let home = cache[.homeDirectory]?.tree.size, let apps = cache[URL(filePath: "/Applications")]?.tree.size else { return nil }
+        let (total, free) = startupDisk()
+        let breakdown = DiskBreakdown(total: total, free: free, home: home, apps: apps)
+        return breakdown.system > 0 ? breakdown : nil
+    }
+
+    private nonisolated static func measure(_ url: URL, progress: ScanProgress) async -> ScanResult {
+        let started = Date()
+        let tree = await DiskScanner.scan(url, progress: progress)
+        return ScanResult(tree: tree, files: progress.snapshot.files, seconds: Date().timeIntervalSince(started), stoppedEarly: progress.isCancelled)
     }
 
     func stopScan() { progress.cancel() }

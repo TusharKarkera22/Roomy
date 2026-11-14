@@ -171,21 +171,75 @@ struct DiskPanel: View {
 
     var body: some View {
         let _ = model.revision
-        let values = try? URL(filePath: "/").resourceValues(forKeys: [.volumeTotalCapacityKey, .volumeAvailableCapacityForImportantUsageKey])
-        let total = Int64(values?.volumeTotalCapacity ?? 0)
-        let free = values?.volumeAvailableCapacityForImportantUsage ?? 0
+        let (total, free) = startupDisk()
         let used = Double(total - free) / Double(max(total, 1))
         RetroPanel("DISK") {
             VStack(alignment: .leading, spacing: 8) {
                 PixelText(text: bytes(free), pixel: 2.6, color: used > 0.9 ? Retro.red : Retro.amber)
                 Text("FREE OF \(bytes(total))").font(Retro.font(10)).tracking(1).foregroundStyle(Retro.dim)
-                SegmentBar(fraction: used, color: used > 0.9 ? Retro.red : Retro.amber, height: 10)
-                Text("\(Int(used * 100))% USED").font(Retro.font(10)).tracking(1).foregroundStyle(Retro.dim)
+                if let disk = model.diskBreakdown {
+                    // After a home folder scan: what fills the disk, as one bar in parts, with a key that opens the parts Roomy can scan.
+                    let parts = [
+                        DiskPart(name: "HOME", spoken: "Home folder", size: disk.home, color: Retro.amber, place: .homeDirectory),
+                        DiskPart(name: "APPS", spoken: "Apps", size: disk.apps, color: Retro.blue, place: URL(filePath: "/Applications")),
+                        DiskPart(name: "MACOS & SYSTEM", spoken: "macOS and system", size: disk.system, color: Retro.system),
+                    ]
+                    // The Free swatch is filled to the gray the bar's narrow outlined slots blend into.
+                    let key = parts + [DiskPart(name: "FREE", spoken: "Free", size: free, color: Retro.phosphor.opacity(0.25))]
+                    StackedBar(parts: parts.map { (Double($0.size) / Double(max(total, 1)), $0.color) }, height: 10)
+                        .accessibilityElement()
+                        .accessibilityLabel(key.map { "\($0.spoken) \(bytes($0.size))" }.joined(separator: ", "))
+                    VStack(spacing: 3) {
+                        ForEach(key, id: \.name) { part in
+                            if let place = part.place {
+                                Button { Task { await model.scan(place) } } label: { row(part, opens: true) }
+                                    .buttonStyle(.plain)
+                                    .help("Show \(part.spoken.lowercased())")
+                                    .accessibilityLabel("\(part.spoken), \(bytes(part.size))")
+                                    .accessibilityHint("Shows what's in it")
+                            } else {
+                                row(part, opens: false)
+                                    .accessibilityElement(children: .ignore)
+                                    .accessibilityLabel("\(part.spoken), \(bytes(part.size))")
+                            }
+                        }
+                    }
+                } else {
+                    SegmentBar(fraction: used, color: used > 0.9 ? Retro.red : Retro.amber, height: 10)
+                    Text("\(Int(used * 100))% USED").font(Retro.font(10)).tracking(1).foregroundStyle(Retro.dim)
+                }
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+
+    /// One line of the key: a swatch, the part's name and size, and a chevron when clicking it opens that place.
+    private func row(_ part: DiskPart, opens: Bool) -> some View {
+        HStack(spacing: 6) {
+            Rectangle().fill(part.color).frame(width: 8, height: 8)
+                .overlay(Rectangle().stroke(Retro.slot, lineWidth: 1))
+            Text(part.name).tracking(1).foregroundStyle(opens ? Retro.phosphor : Retro.dim)
+            Spacer(minLength: 4)
+            Text(bytes(part.size)).foregroundStyle(Retro.phosphor)
+            Text("›").foregroundStyle(Retro.amber).opacity(opens ? 1 : 0)
+        }
+        .font(Retro.font(10))
+        .lineLimit(1)
+        .padding(.vertical, 2)
+        .contentShape(Rectangle())
+    }
+}
+
+/// A part of the startup disk shown in the Disk panel.
+private struct DiskPart {
+    let name: String
+    /// What VoiceOver reads and tooltips say.
+    let spoken: String
+    let size: Int64
+    let color: Color
+    /// Where clicking it goes, for the parts Roomy can scan.
+    var place: URL? = nil
 }
 
 /// Confirms a cleanup, spelling out what happens.

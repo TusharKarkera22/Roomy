@@ -11,6 +11,10 @@ enum Retro {
     static let amber = Color(hex: 0xFFB238)
     static let orange = Color(hex: 0xFF6A1F)
     static let red = Color(hex: 0xFF3D2E)
+    /// A dimmer magenta, kin to Locked: space macOS keeps for itself.
+    static let system = Color(hex: 0xAF3A92)
+    /// Outline of an empty slot, such as free space.
+    static let slot = Color(hex: 0xF6E7C8).opacity(0.35)
     static let magenta = Color(hex: 0xFF4FD8)
     static let blue = Color(hex: 0x8FB4FF)
     static let green = Color(hex: 0x8CFF6A)
@@ -181,6 +185,44 @@ struct SegmentBar: View {
             for index in 0..<count {
                 let segment = CGRect(x: CGFloat(index) * step, y: 0, width: step - 1.6, height: size.height)
                 context.fill(Path(segment), with: .color(index < lit ? color : Retro.phosphor.opacity(0.08)))
+            }
+        }
+        .frame(height: height)
+    }
+}
+
+/// A row of segments lit in colored parts, one after another; segments past the last part are drawn as empty, outlined slots.
+struct StackedBar: View {
+    let parts: [(fraction: Double, color: Color)]
+    var height: CGFloat = 7
+
+    var body: some View {
+        Canvas { context, size in
+            let step: CGFloat = 4
+            let count = Int(size.width / step)
+            // Where each part ends, in segments.
+            var ends: [Int] = []
+            var sum = 0.0
+            for part in parts {
+                sum += max(part.fraction, 0)
+                var end = Int((Double(count) * min(sum, 1)).rounded())
+                // A part that isn't empty keeps at least one lit segment after the gap before it.
+                if part.fraction > 0 { end = min(max(end, (ends.last ?? -1) + 2), count) }
+                ends.append(end)
+            }
+            for index in 0..<count {
+                let segment = CGRect(x: CGFloat(index) * step, y: 0, width: step - 1.6, height: size.height)
+                // A dark segment where one part starts after another, and where the empty slots start,
+                // so the parts read apart without relying on color.
+                let isGap = ends.contains { index == $0 && $0 > 0 }
+                if isGap { continue }
+                if let part = ends.firstIndex(where: { index < $0 }) {
+                    context.fill(Path(segment), with: .color(parts[part].color))
+                } else {
+                    // Empty: an outlined slot, visible on the dark screen but plainly unlit.
+                    context.fill(Path(segment), with: .color(Retro.phosphor.opacity(0.05)))
+                    context.stroke(Path(segment.insetBy(dx: 0.4, dy: 0.4)), with: .color(Retro.slot), lineWidth: 0.8)
+                }
             }
         }
         .frame(height: height)
