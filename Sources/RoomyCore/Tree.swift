@@ -15,6 +15,9 @@ public final class Node: Identifiable, @unchecked Sendable {
     public internal(set) var isLocked = false
     /// Another disk or a device mounted here (such as a connected iPhone under ~/Library/Developer), which we don't measure.
     public internal(set) var isOtherDisk = false
+    /// A cloud drive folder (iCloud Drive, Google Drive, Dropbox…) that hasn't been downloaded, so it takes no space on this Mac.
+    /// We don't look inside: listing it makes the cloud drive fetch it from the internet.
+    public internal(set) var isCloudOnly = false
     private let rootPath: String?
 
     init(root: URL) {
@@ -163,7 +166,13 @@ public enum DiskScanner {
                 let child = Node(name: item.lastPathComponent, isDirectory: true, parent: node)
                 node.children.append(child)
                 // Reading a mounted device can hang for minutes, so stay on the disk we started on.
-                if values?.isVolume == true { child.isOtherDisk = true } else { folders.append((child, item)) }
+                if values?.isVolume == true {
+                    child.isOtherDisk = true
+                } else if isCloudOnly(item) {
+                    child.isCloudOnly = true
+                } else {
+                    folders.append((child, item))
+                }
             } else {
                 let size = Int64(values?.totalFileAllocatedSize ?? 0)
                 bytes += size
@@ -177,6 +186,13 @@ public enum DiskScanner {
         }
         progress.record(files: items.count - folders.count, bytes: bytes, folder: url.path)
         return folders
+    }
+
+    /// Whether macOS marks this folder "dataless": a cloud drive knows it exists but hasn't downloaded what's in it.
+    /// Listing one makes the cloud drive fetch it over the internet, one folder at a time, which on a big drive takes hours.
+    static func isCloudOnly(_ url: URL) -> Bool {
+        var info = stat()
+        return lstat(url.path, &info) == 0 && info.st_flags & UInt32(SF_DATALESS) != 0
     }
 }
 

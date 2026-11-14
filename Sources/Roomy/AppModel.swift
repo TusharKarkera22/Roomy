@@ -133,7 +133,7 @@ final class AppModel {
 
     /// What cleaning this item means, or nil if Roomy won't touch it.
     func cleanAction(for node: Node) -> CleanAction? {
-        guard !node.isLocked, !node.isOtherDisk else { return nil }
+        guard !node.isLocked, !node.isOtherDisk, !node.isCloudOnly else { return nil }
         if node.isDirectory && node.path == URL.homeDirectory.appending(path: ".Trash").path { return .emptyTrash(node) }
         if canTrash(node) { return .trash(node) }
         if node.isDirectory && rule(for: node)?.verdict == .safe { return .trashContents(node) }

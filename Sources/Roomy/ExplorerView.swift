@@ -35,7 +35,7 @@ struct ExplorerView: View {
                                         SmallFilesRow(count: folder.smallFiles, size: folder.smallFilesSize, largest: largest)
                                     }
                                     if folder.children.isEmpty && folder.smallFiles == 0 {
-                                        Text(folder.isLocked ? "macOS kept this folder closed." : "This folder is empty.")
+                                        Text(folder.isLocked ? "macOS kept this folder closed." : folder.isCloudOnly ? "Your cloud drive hasn't downloaded this folder, so it takes no space here." : "This folder is empty.")
                                             .font(Retro.font(12)).foregroundStyle(Retro.dim).padding(24)
                                     }
                                 }
@@ -74,7 +74,7 @@ struct ExplorerView: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 8)
-            VerdictTag(verdict: model.rule(for: folder)?.verdict, isLocked: folder.isLocked)
+            VerdictTag(verdict: model.rule(for: folder)?.verdict, isLocked: folder.isLocked, isCloudOnly: folder.isCloudOnly)
             PixelText(text: bytes(folder.size), pixel: 2.6, color: Retro.amber)
         }
         .padding(12)
@@ -140,7 +140,7 @@ struct NodeRow: View {
     var body: some View {
         let rule = model.rule(for: node)
         let isSelected = model.selected === node
-        let color = node.isOtherDisk ? Retro.dim : Retro.color(rule?.verdict, locked: node.isLocked)
+        let color = node.isOtherDisk || node.isCloudOnly ? Retro.dim : Retro.color(rule?.verdict, locked: node.isLocked)
         HStack(spacing: 12) {
             Rectangle().fill(isSelected ? Retro.amber : .clear).frame(width: 3).glow(Retro.amber, isSelected ? 4 : 0)
             PixelSprite(sprite: node.isDirectory ? Sprites.folder : Sprites.file, pixel: 1.5).frame(width: 24)
@@ -156,7 +156,7 @@ struct NodeRow: View {
                 }
                 SegmentBar(fraction: Double(node.size) / Double(max(largest, 1)), color: color, height: 5)
             }
-            VerdictTag(verdict: rule?.verdict, isLocked: node.isLocked, isOtherDisk: node.isOtherDisk)
+            VerdictTag(verdict: rule?.verdict, isLocked: node.isLocked, isOtherDisk: node.isOtherDisk, isCloudOnly: node.isCloudOnly)
                 .frame(width: 96, alignment: .trailing)
             Text(node.isLocked || node.isOtherDisk ? "—" : bytes(node.size))
                 .font(Retro.font(12)).foregroundStyle(Retro.phosphor)
@@ -232,12 +232,15 @@ struct InfoPanel: View {
                                 PixelText(text: node.isLocked || node.isOtherDisk ? "N/A" : bytes(node.size), pixel: 2.4, color: Retro.amber)
                             }
                         }
-                        VerdictTag(verdict: rule?.verdict, isLocked: node.isLocked, isOtherDisk: node.isOtherDisk)
+                        VerdictTag(verdict: rule?.verdict, isLocked: node.isLocked, isOtherDisk: node.isOtherDisk, isCloudOnly: node.isCloudOnly)
                         Text(tildePath(node.url)).font(Retro.font(10)).foregroundStyle(Retro.dim).textSelection(.enabled)
                         Hairline()
 
                         if node.isOtherDisk {
                             Field(label: "Another disk", text: "A separate disk or a connected device (such as an iPhone) appears here. It doesn't use this Mac's disk, so Roomy doesn't measure it.")
+                        }
+                        if node.isCloudOnly {
+                            Field(label: "In the cloud", text: "Your cloud drive keeps this folder online and hasn't downloaded it, so it takes no space on this Mac. Roomy doesn't look inside, because that would make the cloud drive fetch it from the internet.")
                         }
                         if node.isLocked {
                             Field(label: "macOS kept this folder closed", text: "Roomy couldn't look inside, so it isn't counted. Give Roomy Full Disk Access to measure it.")
@@ -258,7 +261,7 @@ struct InfoPanel: View {
                         if case .trashContents = action {
                             Text("macOS expects this folder to exist, so Roomy keeps the folder and moves everything inside it to the Trash.")
                                 .font(Retro.font(10.5)).foregroundStyle(Retro.dim).fixedSize(horizontal: false, vertical: true)
-                        } else if action == nil && !node.isLocked && !node.isOtherDisk {
+                        } else if action == nil && !node.isLocked && !node.isOtherDisk && !node.isCloudOnly {
                             Text("Roomy won't remove this folder itself: it's the scanned folder, or a top-level one like Library. Open it and clean what's inside.")
                                 .font(Retro.font(10.5)).foregroundStyle(Retro.dim).fixedSize(horizontal: false, vertical: true)
                         }

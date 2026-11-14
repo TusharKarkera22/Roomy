@@ -211,11 +211,12 @@ struct VerdictTag: View {
     let verdict: Verdict?
     var isLocked = false
     var isOtherDisk = false
+    var isCloudOnly = false
 
     var body: some View {
-        let color = isOtherDisk ? Retro.dim : Retro.color(verdict, locked: isLocked)
+        let color = isOtherDisk || isCloudOnly ? Retro.dim : Retro.color(verdict, locked: isLocked)
         HStack(spacing: 4) {
-            if !isOtherDisk { PixelSprite(sprite: glyph, pixel: 1.3, ink: color) }
+            if !isOtherDisk && !isCloudOnly { PixelSprite(sprite: glyph, pixel: 1.3, ink: color) }
             Text(label).font(Retro.font(9.5)).bold()
         }
         .foregroundStyle(color)
@@ -229,6 +230,7 @@ struct VerdictTag: View {
 
     private var label: String {
         if isOtherDisk { return "OTHER DISK" }
+        if isCloudOnly { return "IN THE CLOUD" }
         if isLocked { return "LOCKED" }
         switch verdict {
         case .safe: return "SAFE"

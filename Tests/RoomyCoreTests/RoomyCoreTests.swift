@@ -93,6 +93,9 @@ final class RoomyCoreTests: XCTestCase {
         XCTAssertEqual(tree.size, tree.smallFilesSize + tree.children.reduce(0) { $0 + $1.size })
         XCTAssertEqual(tree.largestFiles().map(\.name), ["big1", "big2"])
         XCTAssertEqual(tree.lockedFolders().map(\.name), ["locked"])
+        // Ordinary folders on this disk are measured, never skipped as cloud-only.
+        XCTAssertFalse(inner.isCloudOnly)
+        XCTAssertFalse(DiskScanner.isCloudOnly(folder))
 
         let before = tree.size
         let big2 = inner.children[0]
